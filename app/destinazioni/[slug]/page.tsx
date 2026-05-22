@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { destinations, tips } from '@/lib/data'
+import { getDestinations, getDestinationBySlug, getTips } from '@/lib/data'
 import TipCard from '@/components/TipCard'
 import GroupRow from '@/components/GroupRow'
 
@@ -9,11 +9,12 @@ interface Props {
 }
 
 export async function generateStaticParams() {
+  const destinations = await getDestinations()
   return destinations.map(d => ({ slug: d.slug }))
 }
 
 export async function generateMetadata({ params }: Props) {
-  const dest = destinations.find(d => d.slug === params.slug)
+  const dest = await getDestinationBySlug(params.slug)
   if (!dest) return {}
   return {
     title: `${dest.name} — travelclub`,
@@ -21,19 +22,17 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default function DestinazioneDetailPage({ params }: Props) {
-  const dest = destinations.find(d => d.slug === params.slug)
+export default async function DestinazioneDetailPage({ params }: Props) {
+  const dest = await getDestinationBySlug(params.slug)
   if (!dest) notFound()
 
-  const destTips = tips.filter(t => t.destination_slug === dest.slug)
+  const destTips = await getTips(dest.slug)
   const activeGroups = dest.groups.filter(g => g.is_active)
   const fullGroups = dest.groups.filter(g => !g.is_active)
   const totalMembers = dest.groups.reduce((s, g) => s + g.member_count, 0)
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
         <Link href="/destinazioni" className="hover:text-gray-700 transition-colors">
           Destinazioni
@@ -42,7 +41,6 @@ export default function DestinazioneDetailPage({ params }: Props) {
         <span className="text-gray-700">{dest.name}</span>
       </div>
 
-      {/* Header */}
       <div className="flex items-start justify-between gap-6 mb-10">
         <div className="flex items-center gap-5">
           <span className="text-6xl">{dest.flag_emoji}</span>
@@ -71,7 +69,6 @@ export default function DestinazioneDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="flex gap-4 flex-shrink-0">
           <div className="text-center">
             <div className="font-display font-semibold text-2xl">{dest.member_count.toLocaleString()}</div>
@@ -89,17 +86,11 @@ export default function DestinazioneDetailPage({ params }: Props) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-        {/* Colonna principale */}
         <div className="lg:col-span-2 space-y-10">
-
-          {/* Consigli */}
           <section>
             <div className="flex justify-between items-end mb-5">
               <div>
-                <h2 className="font-display font-semibold text-xl mb-1">
-                  Consigli della community
-                </h2>
+                <h2 className="font-display font-semibold text-xl mb-1">Consigli della community</h2>
                 <p className="text-sm text-gray-400">
                   {destTips.length > 0
                     ? `${destTips.length} tip condivisi da chi c'è stato`
@@ -134,13 +125,9 @@ export default function DestinazioneDetailPage({ params }: Props) {
               </div>
             )}
           </section>
-
         </div>
 
-        {/* Sidebar gruppi */}
         <div className="space-y-6">
-
-          {/* Gruppi attivi */}
           <div className="border border-gray-100 rounded-xl overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <h3 className="font-medium text-base">Gruppi WhatsApp</h3>
@@ -165,7 +152,6 @@ export default function DestinazioneDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Info utili */}
           <div className="border border-gray-100 rounded-xl p-5">
             <h3 className="font-medium text-base mb-4">Info utili</h3>
             <div className="space-y-3 text-sm">
@@ -183,7 +169,6 @@ export default function DestinazioneDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

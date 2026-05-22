@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { destinations, tips } from '@/lib/data'
+import { getDestinations, getTips } from '@/lib/data'
 import TipCard from '@/components/TipCard'
 
 const stats = [
@@ -9,7 +9,10 @@ const stats = [
   { num: '8.4k', label: 'Consigli condivisi' },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  const destinations = await getDestinations()
+  const tips = await getTips()
+
   const trending = destinations.filter(d => d.is_trending).slice(0, 3)
   const recentTips = tips.slice(0, 4)
 
