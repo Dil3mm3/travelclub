@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getDestinations, getDestinationBySlug, getTips } from '@/lib/data'
 import TipCard from '@/components/TipCard'
 import GroupRow from '@/components/GroupRow'
+export const revalidate = 0
 
 interface Props {
   params: { slug: string }

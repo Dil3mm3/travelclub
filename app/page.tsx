@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getDestinations, getTips } from '@/lib/data'
 import TipCard from '@/components/TipCard'
+export const revalidate = 0
 
 const stats = [
   { num: '12k+', label: 'Viaggiatori iscritti' },
