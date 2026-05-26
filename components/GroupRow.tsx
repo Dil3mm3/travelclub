@@ -1,4 +1,5 @@
 import { WhatsAppGroup } from '@/lib/types'
+import WhatsAppIcon from './WhatsAppIcon'
 
 interface Props {
   group: WhatsAppGroup
@@ -16,7 +17,7 @@ export default function GroupRow({ group }: Props) {
           <div className="min-w-0">
             <div className="text-sm font-medium leading-tight">{group.name}</div>
             <div className="text-xs text-gray-400 mt-0.5">
-              {group.member_count.toLocaleString()} / {group.max_members.toLocaleString()} membri
+              {group.member_count} / {group.max_members} membri
             </div>
           </div>
         </div>
@@ -26,8 +27,9 @@ export default function GroupRow({ group }: Props) {
             href={group.whatsapp_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-shrink-0 text-xs font-medium px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+            className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#25D366] text-white rounded-lg hover:bg-[#1ebe5d] transition-colors shadow-sm"
           >
+            <WhatsAppIcon size={13} />
             Entra
           </a>
         ) : (
@@ -41,7 +43,7 @@ export default function GroupRow({ group }: Props) {
       <div className="ml-4">
         <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : 'bg-green-300'}`}
+            className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : 'bg-[#25D366]'}`}
             style={{ width: `${percentage}%` }}
           />
         </div>

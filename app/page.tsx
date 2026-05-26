@@ -1,13 +1,16 @@
 import Link from 'next/link'
 import { getDestinations, getTips } from '@/lib/data'
 import TipCard from '@/components/TipCard'
+import WhatsAppIcon from '@/components/WhatsAppIcon'
+import { MapPin, Users, MessageCircle, Star } from 'lucide-react'
+
 export const revalidate = 0
 
 const stats = [
-  { num: '12k+', label: 'Viaggiatori iscritti' },
-  { num: '340',  label: 'Gruppi WhatsApp attivi' },
-  { num: '89',   label: 'Paesi coperti' },
-  { num: '8.4k', label: 'Consigli condivisi' },
+  { num: '12k+', label: 'Viaggiatori iscritti',    icon: <Users size={18} className="text-blue-500" /> },
+  { num: '340',  label: 'Gruppi WhatsApp attivi',  icon: <span className="text-[#25D366]"><WhatsAppIcon size={18} /></span> },
+  { num: '89',   label: 'Paesi coperti',           icon: <MapPin size={18} className="text-orange-500" /> },
+  { num: '8.4k', label: 'Consigli condivisi',      icon: <Star size={18} className="text-yellow-500" /> },
 ]
 
 export default async function HomePage() {
@@ -23,9 +26,10 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-gray-400 mb-4">
-            Community italiana di viaggiatori
-          </p>
+          <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
+            <WhatsAppIcon size={13} />
+            340 gruppi WhatsApp attivi
+          </div>
           <h1 className="font-display font-semibold text-5xl leading-tight mb-5">
             Viaggia{' '}
             <span className="italic font-normal text-gray-400">meglio</span>
@@ -35,25 +39,28 @@ export default async function HomePage() {
             Consigli veri da chi c&apos;è stato. Gruppi WhatsApp attivi per ogni destinazione.
             Niente agenzie, solo esperienze reali.
           </p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <Link
               href="/destinazioni"
-              className="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1ebe5d] transition-colors shadow-sm"
             >
-              Trova il tuo gruppo →
+              <WhatsAppIcon size={15} />
+              Trova il tuo gruppo
             </Link>
             <Link
               href="/consigli"
-              className="border border-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
             >
+              <MessageCircle size={15} />
               Sfoglia i consigli
             </Link>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          {stats.map(({ num, label }) => (
+          {stats.map(({ num, label, icon }) => (
             <div key={label} className="bg-gray-50 rounded-xl p-5">
+              <div className="mb-2">{icon}</div>
               <div className="font-display font-semibold text-3xl mb-1">{num}</div>
               <div className="text-xs text-gray-500">{label}</div>
             </div>
@@ -80,7 +87,7 @@ export default async function HomePage() {
             <Link
               key={dest.id}
               href={`/destinazioni/${dest.slug}`}
-              className="border border-gray-100 rounded-xl p-5 hover:border-gray-300 transition-colors group"
+              className="border border-gray-100 rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all group"
             >
               <div className="text-3xl mb-3">{dest.flag_emoji}</div>
               <div className="font-medium text-base mb-1">{dest.name}</div>
@@ -92,11 +99,14 @@ export default async function HomePage() {
                   </span>
                 ))}
               </div>
-              <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                 <span className="text-xs text-gray-500">
-                  {dest.groups.filter(g => g.is_active).length} gruppi attivi ·{' '}
+                  {dest.groups.filter(g => g.is_active).length} gruppi ·{' '}
                   {dest.groups.reduce((s, g) => s + g.member_count, 0)} membri
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 bg-[#25D366] text-white rounded-lg group-hover:bg-[#1ebe5d] transition-colors shadow-sm">
+                  <WhatsAppIcon size={12} />
+                  Entra
                 </span>
               </div>
             </Link>
@@ -126,22 +136,25 @@ export default async function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-gray-50 rounded-2xl p-8 mb-16 flex flex-col md:flex-row justify-between items-center gap-6">
+      <section className="bg-gray-900 rounded-2xl p-8 mb-16 flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
-          <h3 className="font-display font-semibold text-xl mb-2">
+          <h3 className="font-display font-semibold text-xl text-white mb-2">
             Sei appena tornato da un viaggio?
           </h3>
-          <p className="text-sm text-gray-500 max-w-sm leading-relaxed">
+          <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
             Condividi i tuoi consigli e aiuta altri italiani a viaggiare meglio.
             Ogni tip utile guadagna punti community.
           </p>
         </div>
-        <Link
-          href="/consigli/nuovo"
-          className="flex-shrink-0 bg-gray-900 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
-        >
-          Condividi un consiglio →
-        </Link>
+        <div className="flex gap-3 flex-shrink-0">
+          <Link
+            href="/consigli/nuovo"
+            className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors"
+          >
+            <Star size={15} />
+            Condividi un consiglio
+          </Link>
+        </div>
       </section>
 
     </div>
