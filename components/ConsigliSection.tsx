@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Tip } from '@/lib/types'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import TipCard from './TipCard'
 import { CheckCircle, AlertCircle, Loader2, X, ChevronDown } from 'lucide-react'
 
@@ -69,6 +69,7 @@ export default function ConsigliSection({ tips, destinationSlug, destinationName
 
     setFormStatus('loading')
 
+    const supabase = createClient()
     const { error } = await supabase.from('tip_submissions').insert({
       destination_slug: destinationSlug,
       destination_name: destinationName,
@@ -113,9 +114,9 @@ export default function ConsigliSection({ tips, destinationSlug, destinationName
         {!showForm && formStatus !== 'success' && (
           <button
             onClick={() => setShowForm(true)}
-            className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+            className="text-sm border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
           >
-            ✈️ Condividi un consiglio
+            + Aggiungi
           </button>
         )}
       </div>

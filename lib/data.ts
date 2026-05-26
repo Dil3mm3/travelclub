@@ -1,4 +1,5 @@
-import { supabase } from './supabase'
+import { createClient } from './supabase'
+const supabase = createClient()
 import { Destination, Tip } from './types'
 
 export async function getDestinations(): Promise<Destination[]> {

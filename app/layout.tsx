@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import AuthProvider from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
   title: 'travelclub — community italiana di viaggiatori',
@@ -22,18 +23,20 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className="bg-white text-gray-900 min-h-screen">
-        <Navbar />
-        <main>{children}</main>
-        <footer className="border-t border-gray-100 mt-20 py-10 px-6">
-          <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <span className="font-display font-semibold text-lg">
-              travelcl<span className="italic text-gray-400">ub</span>
-            </span>
-            <p className="text-sm text-gray-400">
-              © {new Date().getFullYear()} travelclub — fatto con amore in Italia
-            </p>
-          </div>
-        </footer>
+        <AuthProvider>
+          <Navbar />
+          <main>{children}</main>
+          <footer className="border-t border-gray-100 mt-20 py-10 px-6">
+            <div className="max-w-5xl mx-auto flex justify-between items-center">
+              <span className="font-display font-semibold text-lg">
+                travelcl<span className="italic text-gray-400">ub</span>
+              </span>
+              <p className="text-sm text-gray-400">
+                © {new Date().getFullYear()} travelclub — fatto con amore in Italia
+              </p>
+            </div>
+          </footer>
+        </AuthProvider>
       </body>
     </html>
   )

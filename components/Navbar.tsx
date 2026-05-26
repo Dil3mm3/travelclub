@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
+import AuthButton from './AuthButton'
 
 const continents = [
   {
@@ -185,12 +186,7 @@ export default function Navbar() {
             Consigli
           </Link>
 
-          <Link
-            href="/accedi"
-            className="text-sm bg-gray-900 text-white px-4 py-1.5 rounded-lg hover:bg-gray-700 transition-colors font-medium"
-          >
-            Accedi
-          </Link>
+          <AuthButton />
         </div>
       </div>
     </nav>

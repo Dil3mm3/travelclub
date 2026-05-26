@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import WhatsAppIcon from './WhatsAppIcon'
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
@@ -48,6 +48,7 @@ export default function ProponiGruppoForm({ destinationSlug, destinationName }: 
 
     setStatus('loading')
 
+    const supabase = createClient()
     const { error } = await supabase.from('group_submissions').insert({
       destination_slug: destinationSlug,
       destination_name: destinationName,

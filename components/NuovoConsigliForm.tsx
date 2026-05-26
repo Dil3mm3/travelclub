@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { Destination } from '@/lib/types'
 import { CheckCircle, AlertCircle, Loader2, X } from 'lucide-react'
 import Link from 'next/link'
@@ -83,6 +83,7 @@ export default function NuovoConsigliForm({ destinations }: Props) {
 
     setStatus('loading')
 
+    const supabase = createClient()
     const { error } = await supabase.from('tip_submissions').insert({
       destination_slug: form.destination_slug,
       destination_name: selectedDest?.name ?? '',
