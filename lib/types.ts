@@ -37,3 +37,14 @@ export interface Tip {
   likes: number
   category: 'trasporti' | 'ristoranti' | 'alloggi' | 'sicurezza' | 'cultura' | 'altro'
 }
+
+export interface GroupSubmission {
+  id: string
+  destination_slug: string
+  destination_name: string
+  group_name: string
+  whatsapp_url: string
+  submitter_note?: string
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+}

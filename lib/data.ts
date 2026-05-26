@@ -5,13 +5,15 @@ export async function getDestinations(): Promise<Destination[]> {
   const { data: destinations, error: destError } = await supabase
     .from('destinations')
     .select('*')
-    .order('member_count', { ascending: false })
+    .order('name', { ascending: true })
 
   if (destError || !destinations) return []
 
-  const { data: groups } = await supabase
-  .from('whatsapp_groups')
-  .select('*')
+  const { data: groups, error: groupsError } = await supabase
+    .from('whatsapp_groups')
+    .select('*')
+
+  if (groupsError || !groups) return []
 
   return destinations.map(d => ({
     id: d.id,
@@ -25,8 +27,8 @@ export async function getDestinations(): Promise<Destination[]> {
     member_count: d.member_count,
     is_trending: d.is_trending,
     is_emerging: d.is_emerging,
-    groups: (groups ?? [])
-    .filter(g => g.destination_id === d.id)
+    groups: groups
+      .filter(g => g.destination_id === d.id)
       .map(g => ({
         id: g.id,
         name: g.name,

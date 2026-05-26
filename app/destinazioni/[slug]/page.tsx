@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getDestinations, getDestinationBySlug, getTips } from '@/lib/data'
-import TipCard from '@/components/TipCard'
+import ConsigliSection from '@/components/ConsigliSection'
 import GroupRow from '@/components/GroupRow'
+
 export const revalidate = 0
 
 interface Props {
@@ -34,6 +35,8 @@ export default async function DestinazioneDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
+
+      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
         <Link href="/destinazioni" className="hover:text-gray-700 transition-colors">
           Destinazioni
@@ -42,6 +45,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
         <span className="text-gray-700">{dest.name}</span>
       </div>
 
+      {/* Header */}
       <div className="flex items-start justify-between gap-6 mb-10">
         <div className="flex items-center gap-5">
           <span className="text-6xl">{dest.flag_emoji}</span>
@@ -70,9 +74,10 @@ export default async function DestinazioneDetailPage({ params }: Props) {
           </div>
         </div>
 
-        <div className="flex gap-4 flex-shrink-0">
+        {/* Stats */}
+        <div className="flex gap-6 flex-shrink-0">
           <div className="text-center">
-            <div className="font-display font-semibold text-2xl">{dest.member_count.toLocaleString()}</div>
+            <div className="font-display font-semibold text-2xl">{dest.member_count}</div>
             <div className="text-xs text-gray-400">italiani qui</div>
           </div>
           <div className="text-center">
@@ -80,54 +85,25 @@ export default async function DestinazioneDetailPage({ params }: Props) {
             <div className="text-xs text-gray-400">gruppi attivi</div>
           </div>
           <div className="text-center">
-            <div className="font-display font-semibold text-2xl">{totalMembers.toLocaleString()}</div>
+            <div className="font-display font-semibold text-2xl">{totalMembers}</div>
             <div className="text-xs text-gray-400">nei gruppi</div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-10">
-          <section>
-            <div className="flex justify-between items-end mb-5">
-              <div>
-                <h2 className="font-display font-semibold text-xl mb-1">Consigli della community</h2>
-                <p className="text-sm text-gray-400">
-                  {destTips.length > 0
-                    ? `${destTips.length} tip condivisi da chi c'è stato`
-                    : 'Ancora nessun consiglio — sii il primo!'}
-                </p>
-              </div>
-              <Link
-                href="/consigli/nuovo"
-                className="text-sm border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
-              >
-                + Aggiungi
-              </Link>
-            </div>
 
-            {destTips.length > 0 ? (
-              <div className="space-y-4">
-                {destTips.map(tip => (
-                  <TipCard key={tip.id} tip={tip} />
-                ))}
-              </div>
-            ) : (
-              <div className="border border-dashed border-gray-200 rounded-xl p-10 text-center">
-                <p className="text-gray-400 text-sm mb-4">
-                  Sei stato in {dest.name}? Condividi un consiglio utile alla community.
-                </p>
-                <Link
-                  href="/consigli/nuovo"
-                  className="inline-block bg-gray-900 text-white text-sm px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  Condividi un consiglio →
-                </Link>
-              </div>
-            )}
-          </section>
+        {/* Colonna principale — consigli + form */}
+        <div className="lg:col-span-2">
+          <ConsigliSection
+            tips={destTips}
+            destinationSlug={dest.slug}
+            destinationName={dest.name}
+            flagEmoji={dest.flag_emoji}
+          />
         </div>
 
+        {/* Sidebar gruppi */}
         <div className="space-y-6">
           <div className="border border-gray-100 rounded-xl overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
@@ -147,12 +123,16 @@ export default async function DestinazioneDetailPage({ params }: Props) {
               </div>
             )}
             <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
-              <button className="text-xs text-gray-400 hover:text-gray-700 transition-colors w-full text-left">
+              <Link
+                href={`/destinazioni/${dest.slug}/proponi-gruppo`}
+                className="text-xs text-gray-400 hover:text-gray-700 transition-colors w-full text-left"
+              >
                 + Proponi un nuovo gruppo
-              </button>
+              </Link>
             </div>
           </div>
 
+          {/* Info utili */}
           <div className="border border-gray-100 rounded-xl p-5">
             <h3 className="font-medium text-base mb-4">Info utili</h3>
             <div className="space-y-3 text-sm">
@@ -166,7 +146,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Community</span>
-                <span className="font-medium">{dest.member_count.toLocaleString()} italiani</span>
+                <span className="font-medium">{dest.member_count} italiani</span>
               </div>
             </div>
           </div>
