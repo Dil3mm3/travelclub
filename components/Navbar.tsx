@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Menu, X, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
 import AuthButton from './AuthButton'
 
@@ -38,7 +38,7 @@ const continents = [
     ],
   },
   {
-    label: 'Africa', emoji: '🌍',
+    label: 'Africa & ME', emoji: '🌍',
     destinations: [
       { name: 'Marocco', slug: 'marocco', emoji: '🇲🇦' },
       { name: 'Egitto', slug: 'egitto', emoji: '🇪🇬' },
@@ -73,122 +73,166 @@ const continents = [
 
 export default function Navbar() {
   const pathname = usePathname()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedContinent, setExpandedContinent] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  // Chiudi menu desktop cliccando fuori
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false)
+        setDesktopMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  useEffect(() => { setMenuOpen(false) }, [pathname])
+  // Chiudi menu al cambio pagina
+  useEffect(() => {
+    setDesktopMenuOpen(false)
+    setMobileMenuOpen(false)
+    setExpandedContinent(null)
+  }, [pathname])
+
+  // Blocca scroll quando menu mobile è aperto
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [mobileMenuOpen])
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-display font-semibold text-xl tracking-tight">
-          travelcl<span className="italic text-gray-400">ub</span>
-        </Link>
-
-        <div className="flex items-center gap-6">
-          {/* Mega menu destinazioni */}
-          <div className="relative" ref={menuRef}>
-            <div className="flex items-center gap-0.5">
-              <Link
-                href="/destinazioni"
-                className={clsx(
-                  'text-sm transition-colors',
-                  pathname.startsWith('/destinazioni')
-                    ? 'text-gray-900 font-medium'
-                    : 'text-gray-500 hover:text-gray-900'
-                )}
-              >
-                Destinazioni
-              </Link>
-              <button
-                onClick={() => setMenuOpen(v => !v)}
-                className={clsx(
-                  'p-1 rounded transition-colors',
-                  'text-gray-400 hover:text-gray-700'
-                )}
-              >
-                <ChevronDown
-                  size={14}
-                  className={clsx('transition-transform', menuOpen && 'rotate-180')}
-                />
-              </button>
-            </div>
-
-            {menuOpen && (
-              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[680px] bg-white border border-gray-100 rounded-2xl shadow-xl p-6 grid grid-cols-3 gap-6 z-[9999]">
-                {continents.map(continent => (
-                  <div key={continent.label}>
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <span className="text-base">{continent.emoji}</span>
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                        {continent.label}
-                      </span>
-                    </div>
-                    <ul className="space-y-1.5">
-                      {continent.destinations.map(dest => (
-                        <li key={dest.slug}>
-                          <Link
-                            href={`/destinazioni/${dest.slug}`}
-                            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors py-0.5"
-                          >
-                            <span>{dest.emoji}</span>
-                            {dest.name}
-                          </Link>
-                        </li>
-                      ))}
-                      <li>
-                        <Link
-                          href={`/destinazioni#${continent.label.toLowerCase()}`}
-                          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          Vedi tutti →
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                ))}
-
-                {/* Footer del menu */}
-                <div className="col-span-3 pt-4 border-t border-gray-100 flex justify-between items-center">
-                  <span className="text-xs text-gray-400">
-                    Sfoglia tutte le destinazioni per continente
-                  </span>
-                  <Link
-                    href="/destinazioni"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                  >
-                    Vedi tutte le destinazioni →
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <Link
-            href="/consigli"
-            className={clsx(
-              'text-sm transition-colors',
-              pathname.startsWith('/consigli')
-                ? 'text-gray-900 font-medium'
-                : 'text-gray-500 hover:text-gray-900'
-            )}
-          >
-            Consigli
+    <>
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link href="/" className="font-display font-semibold text-xl tracking-tight">
+            travelcl<span className="italic text-gray-400">ub</span>
           </Link>
 
-          <AuthButton />
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-6">
+            <div className="relative" ref={menuRef}>
+              <div className="flex items-center gap-0.5">
+                <Link
+                  href="/destinazioni"
+                  className={clsx('text-sm transition-colors', pathname.startsWith('/destinazioni') ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900')}
+                >
+                  Destinazioni
+                </Link>
+                <button
+                  onClick={() => setDesktopMenuOpen(v => !v)}
+                  className="p-1 rounded text-gray-400 hover:text-gray-700 transition-colors"
+                >
+                  <ChevronDown size={14} className={clsx('transition-transform', desktopMenuOpen && 'rotate-180')} />
+                </button>
+              </div>
+
+              {desktopMenuOpen && (
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[680px] bg-white border border-gray-100 rounded-2xl shadow-xl p-6 grid grid-cols-3 gap-6 z-[9999]">
+                  {continents.map(continent => (
+                    <div key={continent.label}>
+                      <div className="flex items-center gap-1.5 mb-3">
+                        <span className="text-base">{continent.emoji}</span>
+                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{continent.label}</span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {continent.destinations.map(dest => (
+                          <li key={dest.slug}>
+                            <Link href={`/destinazioni/${dest.slug}`} className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors py-0.5">
+                              <span>{dest.emoji}</span>{dest.name}
+                            </Link>
+                          </li>
+                        ))}
+                        <li>
+                          <Link href="/destinazioni" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Vedi tutti →</Link>
+                        </li>
+                      </ul>
+                    </div>
+                  ))}
+                  <div className="col-span-3 pt-4 border-t border-gray-100 flex justify-end">
+                    <Link href="/destinazioni" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                      Vedi tutte le destinazioni →
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/consigli"
+              className={clsx('text-sm transition-colors', pathname.startsWith('/consigli') ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900')}
+            >
+              Consigli
+            </Link>
+
+            <AuthButton />
+          </div>
+
+          {/* Mobile: avatar + hamburger */}
+          <div className="flex md:hidden items-center gap-3">
+            <AuthButton />
+            <button
+              onClick={() => setMobileMenuOpen(v => !v)}
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-white md:hidden overflow-y-auto" style={{ top: '56px' }}>
+          <div className="px-6 py-4 border-b border-gray-100 flex gap-4">
+            <Link href="/destinazioni" className="flex-1 text-center py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg">
+              Tutte le destinazioni
+            </Link>
+            <Link href="/consigli" className="flex-1 text-center py-2.5 border border-gray-200 text-sm font-medium rounded-lg text-gray-700">
+              Consigli
+            </Link>
+          </div>
+
+          <div className="px-6 py-2">
+            {continents.map(continent => (
+              <div key={continent.label} className="border-b border-gray-100 last:border-0">
+                <button
+                  onClick={() => setExpandedContinent(expandedContinent === continent.label ? null : continent.label)}
+                  className="w-full flex items-center justify-between py-4"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{continent.emoji}</span>
+                    <span className="font-medium text-sm">{continent.label}</span>
+                  </div>
+                  <ChevronRight
+                    size={16}
+                    className={clsx('text-gray-400 transition-transform', expandedContinent === continent.label && 'rotate-90')}
+                  />
+                </button>
+
+                {expandedContinent === continent.label && (
+                  <div className="pb-4 grid grid-cols-2 gap-2">
+                    {continent.destinations.map(dest => (
+                      <Link
+                        key={dest.slug}
+                        href={`/destinazioni/${dest.slug}`}
+                        className="flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-gray-50 text-sm text-gray-700"
+                      >
+                        <span>{dest.emoji}</span>{dest.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   )
 }

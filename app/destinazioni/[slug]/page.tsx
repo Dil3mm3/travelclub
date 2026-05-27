@@ -50,8 +50,8 @@ export default async function DestinazioneDetailPage({ params }: Props) {
         <span className="text-gray-700">{dest.name}</span>
       </div>
 
-      <div className="flex items-start justify-between gap-6 mb-8">
-        <div className="flex items-center gap-5">
+      <div className="mb-8">
+        <div className="flex items-center gap-5 mb-4">
           <span className="text-6xl">{dest.flag_emoji}</span>
           <div>
             <div className="flex items-center gap-3 mb-1">
@@ -71,7 +71,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex gap-6 flex-shrink-0">
+        <div className="flex gap-6">
           <div className="text-center">
             <div className="font-display font-semibold text-2xl">{dest.member_count}</div>
             <div className="text-xs text-gray-400">italiani qui</div>

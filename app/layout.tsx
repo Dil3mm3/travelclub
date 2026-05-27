@@ -27,17 +27,15 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <footer className="border-t border-gray-100 mt-20 py-10 px-6">
-            <div className="max-w-5xl mx-auto flex justify-between items-center">
+            <div className="max-w-5xl mx-auto flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
               <span className="font-display font-semibold text-lg">
                 travelcl<span className="italic text-gray-400">ub</span>
               </span>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
                 <a href="/regole" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Regole</a>
                 <a href="/destinazioni" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Destinazioni</a>
-                <a href="mailto:posta@travelclub.it" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Contatti</a>
-                <p className="text-sm text-gray-400">
-                  © {new Date().getFullYear()} travelclub
-                </p>
+                <a href="mailto:ciao@travelclub.it" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Contatti</a>
+                <p className="text-sm text-gray-400">© {new Date().getFullYear()} travelclub</p>
               </div>
             </div>
           </footer>
