@@ -13,7 +13,7 @@ export default function GroupRow({ group }: Props) {
     <div className="px-5 py-4">
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-start gap-2 min-w-0">
-          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${isFull ? 'bg-red-400' : 'bg-green-400'}`} />
+          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${!group.is_active ? 'bg-gray-300' : isFull ? 'bg-red-400' : 'bg-green-400'}`} />
           <div className="min-w-0">
             <div className="text-sm font-medium leading-tight">{group.name}</div>
             <div className="text-xs text-gray-400 mt-0.5">
@@ -22,7 +22,14 @@ export default function GroupRow({ group }: Props) {
           </div>
         </div>
 
-        {!isFull ? (
+        {!group.is_active ? (
+          <span
+            title="Gruppo momentaneamente disattivato"
+            className="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed"
+          >
+            Non disponibile
+          </span>
+        ) : !isFull ? (
           <a
             href={group.whatsapp_url}
             target="_blank"
@@ -43,7 +50,7 @@ export default function GroupRow({ group }: Props) {
       <div className="ml-4">
         <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : 'bg-[#25D366]'}`}
+            className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : !group.is_active ? 'bg-gray-200' : 'bg-[#25D366]'}`}
             style={{ width: `${percentage}%` }}
           />
         </div>
