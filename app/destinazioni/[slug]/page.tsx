@@ -96,6 +96,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
           countryName={dest.name}
           center={mapConfig.center}
           zoom={mapConfig.zoom}
+          destinationSlug={dest.slug}
         />
         <p className="text-xs text-gray-400 mt-2">Clicca sui marker per vedere i gruppi disponibili in ogni città.</p>
       </div>

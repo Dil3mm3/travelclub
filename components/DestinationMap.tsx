@@ -86,9 +86,10 @@ interface Props {
   countryName: string
   center: [number, number]
   zoom: number
+  destinationSlug: string
 }
 
-export default function DestinationMap({ cities, groups, countryName, center, zoom }: Props) {
+export default function DestinationMap({ cities, groups, countryName, center, zoom, destinationSlug }: Props) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
 
@@ -176,7 +177,7 @@ export default function DestinationMap({ cities, groups, countryName, center, zo
             popupContent += `<div style="font-size:11px;color:#9ca3af;margin-top:4px">+${cityGroups.length - 3} altri gruppi nella pagina</div>`
           }
         } else {
-          popupContent += `<div style="font-size:12px;color:#9ca3af">Nessun gruppo ancora.<br><a href="#proponi" style="color:#1f2937;font-weight:500">Proponi il primo →</a></div>`
+          popupContent += `<div style="font-size:12px;color:#9ca3af">Nessun gruppo ancora.<br><a href="/destinazioni/${destinationSlug}/proponi-gruppo" style="color:#1f2937;font-weight:500">Proponi il primo →</a></div>`
         }
 
         popupContent += '</div>'
