@@ -164,6 +164,16 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     showMessage('✅ Link aggiornato.')
   }
 
+  // Cancella segnalazioni per un gruppo
+  const clearReports = async (groupId: string) => {
+    setProcessing(groupId + '_report')
+    const supabase = createClient()
+    await supabase.from('link_reports').delete().eq('group_id', groupId)
+    setActiveGroups(prev => prev.map(g => g.id === groupId ? { ...g, report_count: 0 } : g))
+    setProcessing(null)
+    showMessage('✅ Segnalazioni cancellate.')
+  }
+
   // --- PUBLISHED TIPS ---
   const deleteTip = async (id: string) => {
     if (!confirm('Eliminare questo consiglio?')) return
@@ -331,8 +341,13 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
                     <span className={clsx('w-2 h-2 rounded-full flex-shrink-0', group.is_active ? 'bg-green-400' : 'bg-gray-300')} />
                     <span className="font-medium text-sm">{group.name}</span>
                   </div>
-                  <div className="text-xs text-gray-400 mb-2">
-                    {group.destination_flag} {group.destination_name} · {group.member_count}/{group.max_members} membri
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-400">{group.destination_flag} {group.destination_name} · {group.member_count}/{group.max_members} membri</span>
+                    {group.report_count > 0 && (
+                      <span className="flex items-center gap-1 text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+                        ⚠️ {group.report_count} segnalazion{group.report_count === 1 ? 'e' : 'i'}
+                      </span>
+                    )}
                   </div>
                   {editingGroup === group.id ? (
                     <div className="flex gap-2 items-center">
@@ -362,6 +377,16 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
                   >
                     <Edit2 size={14} />
                   </button>
+                  {group.report_count > 0 && (
+                    <button
+                      onClick={() => clearReports(group.id)}
+                      disabled={processing === group.id + '_report'}
+                      className="text-xs px-2.5 py-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors font-medium"
+                      title="Cancella segnalazioni"
+                    >
+                      Risolto
+                    </button>
+                  )}
                   <button
                     onClick={() => toggleGroupActive(group)}
                     disabled={processing === group.id}

@@ -1,13 +1,34 @@
+'use client'
+
+import { useState } from 'react'
 import { WhatsAppGroup } from '@/lib/types'
+import { createClient } from '@/lib/supabase'
 import WhatsAppIcon from './WhatsAppIcon'
+import { AlertTriangle, CheckCircle } from 'lucide-react'
 
 interface Props {
   group: WhatsAppGroup
+  destinationName: string
 }
 
-export default function GroupRow({ group }: Props) {
+export default function GroupRow({ group, destinationName }: Props) {
   const isFull = group.member_count >= group.max_members
   const percentage = Math.round((group.member_count / group.max_members) * 100)
+  const [reported, setReported] = useState(false)
+  const [reporting, setReporting] = useState(false)
+
+  const handleReport = async () => {
+    if (reported || reporting) return
+    setReporting(true)
+    const supabase = createClient()
+    await supabase.from('link_reports').insert({
+      group_id: group.id,
+      group_name: group.name,
+      destination_name: destinationName,
+    })
+    setReported(true)
+    setReporting(false)
+  }
 
   return (
     <div className="px-5 py-4">
@@ -47,7 +68,7 @@ export default function GroupRow({ group }: Props) {
       </div>
 
       {/* Progress bar */}
-      <div className="ml-4">
+      <div className="ml-4 mb-2">
         <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : !group.is_active ? 'bg-gray-200' : 'bg-[#25D366]'}`}
@@ -55,6 +76,27 @@ export default function GroupRow({ group }: Props) {
           />
         </div>
       </div>
+
+      {/* Segnala link rotto */}
+      {group.is_active && (
+        <div className="ml-4">
+          {reported ? (
+            <span className="flex items-center gap-1 text-xs text-green-600">
+              <CheckCircle size={11} />
+              Segnalazione inviata, grazie!
+            </span>
+          ) : (
+            <button
+              onClick={handleReport}
+              disabled={reporting}
+              className="flex items-center gap-1 text-xs text-gray-300 hover:text-orange-400 transition-colors"
+            >
+              <AlertTriangle size={11} />
+              {reporting ? 'Invio...' : 'Segnala link WhatsApp non funzionante'}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -7,18 +7,19 @@ export interface WhatsAppGroup {
   member_count: number
   max_members: number
   is_active: boolean
+  report_count?: number
 }
 
 export interface Destination {
   id: string
   slug: string
   name: string
-  country_code: string       // ISO 3166-1 alpha-2 e.g. "JP"
+  country_code: string
   flag_emoji: string
   region: Region
-  cities: string[]           // ["Tokyo", "Kyoto", "Osaka"]
-  tags: string[]             // ["Cultura", "Cibo"]
-  member_count: number       // italiani totali che ci hanno viaggiato
+  cities: string[]
+  tags: string[]
+  member_count: number
   is_trending: boolean
   is_emerging: boolean
   groups: WhatsAppGroup[]
@@ -45,6 +46,19 @@ export interface GroupSubmission {
   group_name: string
   whatsapp_url: string
   submitter_note?: string
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+}
+
+export interface TipSubmission {
+  id: string
+  destination_slug: string
+  destination_name: string
+  flag_emoji: string
+  author_name: string
+  content: string
+  tags: string[]
+  category: string
   status: 'pending' | 'approved' | 'rejected'
   created_at: string
 }

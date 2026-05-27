@@ -112,13 +112,13 @@ export default async function DestinazioneDetailPage({ params }: Props) {
             </div>
             <div className="divide-y divide-gray-100">
               {activeGroups.map(group => (
-                <GroupRow key={group.id} group={group} />
+                <GroupRow key={group.id} group={group} destinationName={dest.name} />
               ))}
             </div>
             {fullGroups.length > 0 && (
               <div className="divide-y divide-gray-100 bg-gray-50">
                 {fullGroups.map(group => (
-                  <GroupRow key={group.id} group={group} />
+                  <GroupRow key={group.id} group={group} destinationName={dest.name} />
                 ))}
               </div>
             )}
