@@ -31,9 +31,14 @@ export default function RootLayout({
               <span className="font-display font-semibold text-lg">
                 travelcl<span className="italic text-gray-400">ub</span>
               </span>
-              <p className="text-sm text-gray-400">
-                © {new Date().getFullYear()} travelclub — fatto con amore in Italia
-              </p>
+              <div className="flex items-center gap-6">
+                <a href="/regole" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Regole</a>
+                <a href="/destinazioni" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Destinazioni</a>
+                <a href="mailto:posta@travelclub.it" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">Contatti</a>
+                <p className="text-sm text-gray-400">
+                  © {new Date().getFullYear()} travelclub
+                </p>
+              </div>
             </div>
           </footer>
         </AuthProvider>
