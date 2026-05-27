@@ -39,6 +39,7 @@ interface ActiveGroup {
   is_active: boolean
   destination_name?: string
   destination_flag?: string
+  report_count?: number
 }
 
 interface PublishedTip {
@@ -343,7 +344,7 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs text-gray-400">{group.destination_flag} {group.destination_name} · {group.member_count}/{group.max_members} membri</span>
-                    {group.report_count > 0 && (
+                    {(group.report_count ?? 0) > 0 && (
                       <span className="flex items-center gap-1 text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
                         ⚠️ {group.report_count} segnalazion{group.report_count === 1 ? 'e' : 'i'}
                       </span>
@@ -377,7 +378,7 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
                   >
                     <Edit2 size={14} />
                   </button>
-                  {group.report_count > 0 && (
+                  {(group.report_count ?? 0) > 0 && (
                     <button
                       onClick={() => clearReports(group.id)}
                       disabled={processing === group.id + '_report'}
