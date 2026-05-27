@@ -8,6 +8,7 @@ export interface WhatsAppGroup {
   max_members: number
   is_active: boolean
   report_count?: number
+  city?: string
 }
 
 export interface Destination {

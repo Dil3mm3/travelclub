@@ -37,6 +37,7 @@ export async function getDestinations(): Promise<Destination[]> {
         member_count: g.member_count,
         max_members: g.max_members,
         is_active: g.is_active,
+        city: g.city ?? undefined,
       })),
   }))
 }
@@ -74,6 +75,7 @@ export async function getDestinationBySlug(slug: string): Promise<Destination | 
       member_count: g.member_count,
       max_members: g.max_members,
       is_active: g.is_active,
+      city: g.city ?? undefined,
     })),
   }
 }
