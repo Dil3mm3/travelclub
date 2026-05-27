@@ -224,7 +224,7 @@ export default function AdminClient({ groupSubmissions, tipSubmissions }: Props)
                     {sub.whatsapp_url}
                   </a>
                   {sub.submitter_note && (
-                    <p className="text-xs text-gray-500 mt-2 italic">"{sub.submitter_note}"</p>
+                    <p className="text-xs text-gray-500 mt-2 italic">&quot;{sub.submitter_note}&quot;</p>
                   )}
                 </div>
 
