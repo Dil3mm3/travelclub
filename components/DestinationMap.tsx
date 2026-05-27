@@ -195,7 +195,11 @@ export default function DestinationMap({ cities, groups, countryName, center, zo
   return (
     <>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-      <div ref={mapRef} className="w-full h-64 rounded-xl overflow-hidden border border-gray-100" />
+      <div
+        ref={mapRef}
+        className="w-full h-64 rounded-xl overflow-hidden border border-gray-100"
+        style={{ zIndex: 0 }}
+      />
     </>
   )
 }

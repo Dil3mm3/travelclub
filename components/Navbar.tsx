@@ -125,7 +125,7 @@ export default function Navbar() {
             </div>
 
             {menuOpen && (
-              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[680px] bg-white border border-gray-100 rounded-2xl shadow-xl p-6 grid grid-cols-3 gap-6">
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[680px] bg-white border border-gray-100 rounded-2xl shadow-xl p-6 grid grid-cols-3 gap-6 z-[9999]">
                 {continents.map(continent => (
                   <div key={continent.label}>
                     <div className="flex items-center gap-1.5 mb-3">
