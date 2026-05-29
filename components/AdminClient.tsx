@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
+import { formatMemberCount } from '@/lib/utils'
 import { CheckCircle, XCircle, Clock, Users, MessageSquare, Trash2, Edit2, X, Check } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -74,6 +75,7 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
   const [message, setMessage] = useState('')
   const [editingGroup, setEditingGroup] = useState<string | null>(null)
   const [editGroupUrl, setEditGroupUrl] = useState('')
+  const [editMemberCount, setEditMemberCount] = useState<number>(0)
 
   const pendingGroups = groups.filter(g => g.status === 'pending')
   const pendingTips = tips.filter(t => t.status === 'pending')
@@ -83,7 +85,6 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     setTimeout(() => setMessage(''), 3000)
   }
 
-  // --- SUBMISSIONS ---
   const approveGroup = async (sub: GroupSubmission) => {
     setProcessing(sub.id)
     const supabase = createClient()
@@ -135,7 +136,6 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     showMessage('❌ Consiglio rifiutato.')
   }
 
-  // --- ACTIVE GROUPS ---
   const deleteGroup = async (id: string, name: string) => {
     if (!confirm(`Eliminare il gruppo "${name}"?`)) return
     setProcessing(id)
@@ -143,7 +143,7 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     await supabase.from('whatsapp_groups').delete().eq('id', id)
     setActiveGroups(prev => prev.filter(g => g.id !== id))
     setProcessing(null)
-    showMessage(`🗑️ Gruppo eliminato.`)
+    showMessage('🗑️ Gruppo eliminato.')
   }
 
   const toggleGroupActive = async (group: ActiveGroup) => {
@@ -155,17 +155,21 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     showMessage(group.is_active ? '⏸️ Gruppo disattivato.' : '▶️ Gruppo attivato.')
   }
 
-  const saveGroupUrl = async (id: string) => {
+  const saveGroup = async (id: string) => {
     setProcessing(id)
     const supabase = createClient()
-    await supabase.from('whatsapp_groups').update({ whatsapp_url: editGroupUrl }).eq('id', id)
-    setActiveGroups(prev => prev.map(g => g.id === id ? { ...g, whatsapp_url: editGroupUrl } : g))
+    await supabase.from('whatsapp_groups').update({
+      whatsapp_url: editGroupUrl,
+      member_count: editMemberCount,
+    }).eq('id', id)
+    setActiveGroups(prev => prev.map(g =>
+      g.id === id ? { ...g, whatsapp_url: editGroupUrl, member_count: editMemberCount } : g
+    ))
     setEditingGroup(null)
     setProcessing(null)
-    showMessage('✅ Link aggiornato.')
+    showMessage('✅ Gruppo aggiornato.')
   }
 
-  // Cancella segnalazioni per un gruppo
   const clearReports = async (groupId: string) => {
     setProcessing(groupId + '_report')
     const supabase = createClient()
@@ -175,7 +179,6 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
     showMessage('✅ Segnalazioni cancellate.')
   }
 
-  // --- PUBLISHED TIPS ---
   const deleteTip = async (id: string) => {
     if (!confirm('Eliminare questo consiglio?')) return
     setProcessing(id)
@@ -248,7 +251,6 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
       {/* TAB: In attesa */}
       {tab === 'attesa' && (
         <div className="space-y-8">
-          {/* Gruppi in attesa */}
           <div>
             <h2 className="font-medium text-sm text-gray-500 uppercase tracking-wide mb-3">Gruppi WhatsApp</h2>
             {pendingGroups.length === 0 ? (
@@ -283,7 +285,6 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
             )}
           </div>
 
-          {/* Consigli in attesa */}
           <div>
             <h2 className="font-medium text-sm text-gray-500 uppercase tracking-wide mb-3">Consigli</h2>
             {pendingTips.length === 0 ? (
@@ -343,66 +344,83 @@ export default function AdminClient({ groupSubmissions, tipSubmissions, activeGr
                     <span className="font-medium text-sm">{group.name}</span>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs text-gray-400">{group.destination_flag} {group.destination_name} · {group.member_count}/{group.max_members} membri</span>
+                    <span className="text-xs text-gray-400">{group.destination_flag} {group.destination_name} · {formatMemberCount(group.member_count)}</span>
                     {(group.report_count ?? 0) > 0 && (
                       <span className="flex items-center gap-1 text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
                         ⚠️ {group.report_count} segnalazion{group.report_count === 1 ? 'e' : 'i'}
                       </span>
                     )}
                   </div>
+
                   {editingGroup === group.id ? (
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={editGroupUrl}
-                        onChange={e => setEditGroupUrl(e.target.value)}
-                        className="flex-1 text-xs px-3 py-1.5 border border-gray-200 rounded-lg outline-none focus:border-gray-400"
-                        placeholder="https://chat.whatsapp.com/..."
-                      />
-                      <button onClick={() => saveGroupUrl(group.id)} disabled={processing === group.id} className="p-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
-                        <Check size={14} />
-                      </button>
-                      <button onClick={() => setEditingGroup(null)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200">
-                        <X size={14} />
-                      </button>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={editGroupUrl}
+                          onChange={e => setEditGroupUrl(e.target.value)}
+                          className="flex-1 text-xs px-3 py-1.5 border border-gray-200 rounded-lg outline-none focus:border-gray-400"
+                          placeholder="https://chat.whatsapp.com/..."
+                        />
+                      </div>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="number"
+                          value={editMemberCount}
+                          onChange={e => setEditMemberCount(parseInt(e.target.value) || 0)}
+                          className="w-24 text-xs px-3 py-1.5 border border-gray-200 rounded-lg outline-none focus:border-gray-400"
+                          placeholder="Membri"
+                          min={0}
+                          max={1024}
+                        />
+                        <span className="text-xs text-gray-400">membri (numero esatto)</span>
+                        <button onClick={() => saveGroup(group.id)} disabled={processing === group.id} className="p-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
+                          <Check size={14} />
+                        </button>
+                        <button onClick={() => setEditingGroup(null)} className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200">
+                          <X size={14} />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <a href={group.whatsapp_url} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline break-all">{group.whatsapp_url}</a>
                   )}
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => { setEditingGroup(group.id); setEditGroupUrl(group.whatsapp_url) }}
-                    className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Modifica link"
-                  >
-                    <Edit2 size={14} />
-                  </button>
-                  {(group.report_count ?? 0) > 0 && (
+
+                {editingGroup !== group.id && (
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
-                      onClick={() => clearReports(group.id)}
-                      disabled={processing === group.id + '_report'}
-                      className="text-xs px-2.5 py-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors font-medium"
-                      title="Cancella segnalazioni"
+                      onClick={() => { setEditingGroup(group.id); setEditGroupUrl(group.whatsapp_url); setEditMemberCount(group.member_count) }}
+                      className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Modifica"
                     >
-                      Risolto
+                      <Edit2 size={14} />
                     </button>
-                  )}
-                  <button
-                    onClick={() => toggleGroupActive(group)}
-                    disabled={processing === group.id}
-                    className={clsx('text-xs px-3 py-1.5 rounded-lg transition-colors font-medium', group.is_active ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-700 hover:bg-green-100')}
-                  >
-                    {group.is_active ? 'Disattiva' : 'Attiva'}
-                  </button>
-                  <button
-                    onClick={() => deleteGroup(group.id, group.name)}
-                    disabled={processing === group.id}
-                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
+                    {(group.report_count ?? 0) > 0 && (
+                      <button
+                        onClick={() => clearReports(group.id)}
+                        disabled={processing === group.id + '_report'}
+                        className="text-xs px-2.5 py-1.5 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors font-medium"
+                      >
+                        Risolto
+                      </button>
+                    )}
+                    <button
+                      onClick={() => toggleGroupActive(group)}
+                      disabled={processing === group.id}
+                      className={clsx('text-xs px-3 py-1.5 rounded-lg transition-colors font-medium', group.is_active ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-700 hover:bg-green-100')}
+                    >
+                      {group.is_active ? 'Disattiva' : 'Attiva'}
+                    </button>
+                    <button
+                      onClick={() => deleteGroup(group.id, group.name)}
+                      disabled={processing === group.id}
+                      className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}

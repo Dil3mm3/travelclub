@@ -107,3 +107,26 @@ export async function getTips(destinationSlug?: string): Promise<Tip[]> {
     category: t.category,
   }))
 }
+
+export async function getSiteStats() {
+  const [
+    { count: activeGroups },
+    { count: destinations },
+    { count: tips },
+    { data: memberData },
+  ] = await Promise.all([
+    supabase.from('whatsapp_groups').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('destinations').select('*', { count: 'exact', head: true }),
+    supabase.from('tips').select('*', { count: 'exact', head: true }),
+    supabase.from('whatsapp_groups').select('member_count').eq('is_active', true),
+  ])
+
+  const totalMembers = (memberData ?? []).reduce((s, g) => s + (g.member_count ?? 0), 0)
+
+  return {
+    activeGroups: activeGroups ?? 0,
+    destinations: destinations ?? 0,
+    tips: tips ?? 0,
+    totalMembers,
+  }
+}

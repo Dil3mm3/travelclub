@@ -1,45 +1,42 @@
 import { Tip } from '@/lib/types'
 import { Heart } from 'lucide-react'
 
-const avatarColors: Record<string, string> = {
-  MR: 'bg-teal-50 text-teal-700',
-  SF: 'bg-purple-50 text-purple-700',
-  LB: 'bg-orange-50 text-orange-700',
-  AG: 'bg-blue-50 text-blue-700',
+const avatarColors: Record<string, { bg: string; color: string }> = {
+  MR: { bg: '#EEF2E6', color: '#4A5E2F' },
+  SF: { bg: '#EEF2E6', color: '#5A7A35' },
+  LB: { bg: '#FEF9C3', color: '#854D0E' },
+  AG: { bg: '#EEF2E6', color: '#4A5E2F' },
 }
 
 export default function TipCard({ tip }: { tip: Tip }) {
-  const avatarColor = avatarColors[tip.author_initials] ?? 'bg-gray-100 text-gray-600'
-  const weeksLabel = tip.weeks_ago === 1
-    ? '1 settimana fa'
-    : `${tip.weeks_ago} settimane fa`
+  const avatar = avatarColors[tip.author_initials] ?? { bg: '#EEF2E6', color: '#4A5E2F' }
+  const weeksLabel = tip.weeks_ago === 1 ? '1 settimana fa' : `${tip.weeks_ago} settimane fa`
 
   return (
-    <div className="border border-gray-100 rounded-xl p-5 hover:border-gray-200 transition-colors">
+    <div style={{ background: 'white', border: '1px solid #DDE4D0', borderRadius: 14, padding: 16 }}>
       <div className="flex items-center gap-3 mb-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 ${avatarColor}`}>
+        <div className="flex items-center justify-center rounded-full flex-shrink-0"
+          style={{ width: 34, height: 34, background: avatar.bg, color: avatar.color, fontSize: 12, fontWeight: 700 }}>
           {tip.author_initials}
         </div>
         <div>
-          <div className="text-sm font-medium">{tip.author_name}</div>
-          <div className="text-xs text-gray-400">
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#1A2010' }}>{tip.author_name}</div>
+          <div style={{ fontSize: 11, color: '#7A8F6A' }}>
             {tip.flag_emoji} {tip.destination_name} · {weeksLabel}
           </div>
         </div>
       </div>
-
-      <p className="text-sm text-gray-600 leading-relaxed mb-4">{tip.content}</p>
-
+      <p style={{ fontSize: 13, color: '#3A4A2A', lineHeight: 1.65, marginBottom: 12 }}>{tip.content}</p>
       <div className="flex justify-between items-center">
         <div className="flex gap-1.5 flex-wrap">
           {tip.tags.map(tag => (
-            <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">
+            <span key={tag} style={{ background: '#EEF2E6', color: '#4A5E2F', fontSize: 10, fontWeight: 500, padding: '2px 8px', borderRadius: 20 }}>
               {tag}
             </span>
           ))}
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <Heart size={13} />
+        <div className="flex items-center gap-1" style={{ fontSize: 11, color: '#7A8F6A' }}>
+          <Heart size={12} />
           {tip.likes}
         </div>
       </div>

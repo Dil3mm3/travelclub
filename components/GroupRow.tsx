@@ -5,6 +5,7 @@ import { WhatsAppGroup } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
 import WhatsAppIcon from './WhatsAppIcon'
 import { AlertTriangle, CheckCircle } from 'lucide-react'
+import { formatMemberCount } from '@/lib/utils'
 
 interface Props {
   group: WhatsAppGroup
@@ -31,66 +32,62 @@ export default function GroupRow({ group, destinationName }: Props) {
   }
 
   return (
-    <div className="px-5 py-4">
+    <div style={{ padding: '14px 20px' }}>
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-start gap-2 min-w-0">
-          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${!group.is_active ? 'bg-gray-300' : isFull ? 'bg-red-400' : 'bg-green-400'}`} />
+          <span className="flex-shrink-0" style={{
+            width: 8, height: 8, borderRadius: '50%', marginTop: 6,
+            background: !group.is_active ? '#9CA3AF' : isFull ? '#EF4444' : '#25D366',
+          }} />
           <div className="min-w-0">
-            <div className="text-sm font-medium leading-tight">{group.name}</div>
-            <div className="text-xs text-gray-400 mt-0.5">
-              {group.member_count} / {group.max_members} membri
-            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A2010', lineHeight: 1.3 }}>{group.name}</div>
+            <div style={{ fontSize: 11, color: '#7A8F6A', marginTop: 2 }}>{formatMemberCount(group.member_count)}</div>
           </div>
         </div>
 
         {!group.is_active ? (
-          <span
-            title="Gruppo momentaneamente disattivato"
-            className="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed"
-          >
+          <span style={{ fontSize: 11, padding: '5px 12px', background: '#F3F4F6', color: '#9CA3AF', borderRadius: 20, flexShrink: 0, cursor: 'not-allowed' }}
+            title="Gruppo momentaneamente disattivato">
             Non disponibile
           </span>
         ) : !isFull ? (
-          <a
-            href={group.whatsapp_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#25D366] text-white rounded-lg hover:bg-[#1ebe5d] transition-colors shadow-sm"
-          >
+          <a href={group.whatsapp_url} target="_blank" rel="noopener noreferrer"
+            className="flex-shrink-0 flex items-center gap-1.5 font-semibold transition-colors"
+            style={{ fontSize: 12, padding: '6px 12px', background: '#25D366', color: 'white', borderRadius: 20 }}>
             <WhatsAppIcon size={13} />
             Entra
           </a>
         ) : (
-          <span className="flex-shrink-0 text-xs px-3 py-1.5 bg-gray-100 text-gray-400 rounded-lg">
+          <span style={{ fontSize: 11, padding: '5px 12px', background: '#F3F4F6', color: '#9CA3AF', borderRadius: 20, flexShrink: 0 }}>
             Pieno
           </span>
         )}
       </div>
 
       {/* Progress bar */}
-      <div className="ml-4 mb-2">
-        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all ${isFull ? 'bg-red-300' : !group.is_active ? 'bg-gray-200' : 'bg-[#25D366]'}`}
-            style={{ width: `${percentage}%` }}
-          />
+      <div style={{ marginLeft: 16, marginBottom: 8 }}>
+        <div style={{ height: 3, background: '#EEF2E6', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%', borderRadius: 99,
+            width: `${percentage}%`,
+            background: isFull ? '#EF4444' : !group.is_active ? '#E5E7EB' : '#25D366',
+            transition: 'width 0.3s ease',
+          }} />
         </div>
       </div>
 
-      {/* Segnala link rotto */}
+      {/* Segnala link */}
       {group.is_active && (
-        <div className="ml-4">
+        <div style={{ marginLeft: 16 }}>
           {reported ? (
-            <span className="flex items-center gap-1 text-xs text-green-600">
+            <span className="flex items-center gap-1" style={{ fontSize: 11, color: '#5A7A35' }}>
               <CheckCircle size={11} />
               Segnalazione inviata, grazie!
             </span>
           ) : (
-            <button
-              onClick={handleReport}
-              disabled={reporting}
-              className="flex items-center gap-1 text-xs text-gray-300 hover:text-orange-400 transition-colors"
-            >
+            <button onClick={handleReport} disabled={reporting}
+              className="flex items-center gap-1 transition-colors"
+              style={{ fontSize: 11, color: '#C4D4B0', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
               <AlertTriangle size={11} />
               {reporting ? 'Invio...' : 'Segnala link WhatsApp non funzionante'}
             </button>

@@ -1,133 +1,134 @@
 import Link from 'next/link'
-import { getDestinations, getTips } from '@/lib/data'
+import { getDestinations, getTips, getSiteStats } from '@/lib/data'
 import TipCard from '@/components/TipCard'
 import WhatsAppIcon from '@/components/WhatsAppIcon'
-import { MapPin, Users, MessageCircle, Star } from 'lucide-react'
+import DestCardHover from '@/components/DestCardHover'
+import StatsHero from '@/components/StatsHero'
 
 export const revalidate = 0
 
-const stats = [
-  { num: '12k+', label: 'Viaggiatori iscritti',    icon: <Users size={18} className="text-blue-500" /> },
-  { num: '340',  label: 'Gruppi WhatsApp attivi',  icon: <span className="text-[#25D366]"><WhatsAppIcon size={18} /></span> },
-  { num: '89',   label: 'Paesi coperti',           icon: <MapPin size={18} className="text-orange-500" /> },
-  { num: '8.4k', label: 'Consigli condivisi',      icon: <Star size={18} className="text-yellow-500" /> },
-]
-
 export default async function HomePage() {
-  const destinations = await getDestinations()
-  const tips = await getTips()
+  const [destinations, tips, stats] = await Promise.all([
+    getDestinations(),
+    getTips(),
+    getSiteStats(),
+  ])
 
   const trending = destinations.filter(d => d.is_trending).slice(0, 3)
   const recentTips = tips.slice(0, 4)
 
   return (
-    <div className="max-w-5xl mx-auto px-6">
-
-      {/* Hero */}
-      <section className="py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div>
-          <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-            <WhatsAppIcon size={13} />
-            340 gruppi WhatsApp attivi
-          </div>
-          <h1 className="font-display font-semibold text-5xl leading-tight mb-5">
-            Viaggia{' '}
-            <span className="italic font-normal text-gray-400">meglio</span>
-            ,<br />insieme.
-          </h1>
-          <p className="text-gray-500 text-base leading-relaxed mb-8 max-w-sm">
-            Consigli veri da chi c&apos;è stato. Gruppi WhatsApp attivi per ogni destinazione.
-            Niente agenzie, solo esperienze reali.
-          </p>
-          <div className="flex gap-3 flex-wrap">
-            <Link
-              href="/destinazioni"
-              className="inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#1ebe5d] transition-colors shadow-sm"
-            >
-              <WhatsAppIcon size={15} />
-              Trova il tuo gruppo
-            </Link>
-            <Link
-              href="/consigli"
-              className="inline-flex items-center gap-2 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
-            >
-              <MessageCircle size={15} />
-              Sfoglia i consigli
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {stats.map(({ num, label, icon }) => (
-            <div key={label} className="bg-gray-50 rounded-xl p-5">
-              <div className="mb-2">{icon}</div>
-              <div className="font-display font-semibold text-3xl mb-1">{num}</div>
-              <div className="text-xs text-gray-500">{label}</div>
+    <div>
+      {/* HERO con foto mare + stats a destra */}
+      <section className="relative" style={{ height: 580, overflow: 'hidden' }}>
+        <div className="absolute inset-0" style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&q=85')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 40%',
+        }} />
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(to top, rgba(20,32,10,0.97) 0%, rgba(20,32,10,0.65) 50%, rgba(20,32,10,0.15) 100%)',
+        }} />
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-5xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#A8C468', marginBottom: 12 }}>
+                il club degli italiani che viaggiano
+              </p>
+              <h1 className="font-display" style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.1, color: 'white', marginBottom: 12 }}>
+                Viaggia{' '}
+                <em style={{ fontStyle: 'italic', color: '#A8C468' }}>meglio</em>,<br />
+                insieme.
+              </h1>
+              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 24, maxWidth: 400 }}>
+                Consigli veri da chi c&apos;è stato. Gruppi WhatsApp per ogni destinazione.
+                Il tuo compagno di viaggio, sempre.
+              </p>
+              <div className="flex gap-3 flex-wrap">
+                <Link href="/destinazioni" className="inline-flex items-center gap-2 font-semibold transition-colors"
+                  style={{ background: '#25D366', color: 'white', fontSize: 13, padding: '11px 22px', borderRadius: 24 }}>
+                  <WhatsAppIcon size={15} />
+                  Trova il tuo gruppo
+                </Link>
+                <Link href="/consigli" className="inline-flex items-center gap-2 font-medium transition-colors"
+                  style={{ border: '1.5px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', fontSize: 13, padding: '11px 22px', borderRadius: 24, background: 'transparent' }}>
+                  Sfoglia i consigli
+                </Link>
+              </div>
             </div>
-          ))}
+            <div className="hidden md:block">
+              <StatsHero
+                activeGroups={stats.activeGroups}
+                destinations={stats.destinations}
+                totalMembers={Math.floor(stats.totalMembers / 100) * 100}
+                tips={stats.tips}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      <hr className="border-gray-100" />
-
-      {/* Destinazioni trending */}
-      <section className="py-12">
+      {/* DESTINAZIONI TRENDING */}
+      <section className="max-w-5xl mx-auto px-6 py-12">
         <div className="flex justify-between items-end mb-6">
           <div>
-            <h2 className="font-display font-semibold text-2xl mb-1">Destinazioni di tendenza</h2>
-            <p className="text-sm text-gray-500">Dove stanno andando gli italiani in questo momento</p>
+            <h2 className="font-display font-semibold" style={{ fontSize: 26, color: '#1A2010', marginBottom: 4 }}>
+              Destinazioni di tendenza
+            </h2>
+            <p style={{ fontSize: 13, color: '#7A8F6A' }}>Dove stanno andando gli italiani in questo momento</p>
           </div>
-          <Link href="/destinazioni" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          <Link href="/destinazioni" className="text-sm font-semibold transition-colors" style={{ color: '#5A7A35' }}>
             Vedi tutte →
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           {trending.map(dest => (
-            <Link
-              key={dest.id}
-              href={`/destinazioni/${dest.slug}`}
-              className="border border-gray-100 rounded-xl p-5 hover:border-gray-300 hover:shadow-sm transition-all group"
-            >
-              <div className="text-3xl mb-3">{dest.flag_emoji}</div>
-              <div className="font-medium text-base mb-1">{dest.name}</div>
-              <div className="text-xs text-gray-400 mb-3">{dest.cities.join(' · ')}</div>
-              <div className="flex gap-1.5 flex-wrap mb-4">
-                {dest.tags.map(tag => (
-                  <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <span className="text-xs text-gray-500">
-                  {dest.groups.filter(g => g.is_active).length} gruppi ·{' '}
-                  {dest.groups.reduce((s, g) => s + g.member_count, 0)} membri
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 bg-[#25D366] text-white rounded-lg group-hover:bg-[#1ebe5d] transition-colors shadow-sm">
-                  <WhatsAppIcon size={12} />
-                  Entra
-                </span>
-              </div>
-            </Link>
+            <DestCardHover key={dest.id} dest={dest} />
           ))}
+        </div>
+
+        {/* FOTO COMMUNITY */}
+        <div className="relative rounded-2xl overflow-hidden mb-4" style={{ height: 320 }}>
+          <div className="absolute inset-0" style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=1200&q=85')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+          }} />
+          <div className="absolute inset-0" style={{
+            background: 'linear-gradient(to right, rgba(20,32,10,0.88) 0%, rgba(20,32,10,0.35) 55%, rgba(20,32,10,0.1) 100%)',
+          }} />
+          <div className="absolute inset-0 flex flex-col justify-center px-8">
+            <h3 className="font-display" style={{ fontSize: 28, fontWeight: 700, color: 'white', lineHeight: 1.2, marginBottom: 8 }}>
+              Non viaggi<br /><em style={{ fontStyle: 'italic', color: '#A8C468' }}>mai</em> da solo.
+            </h3>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5, marginBottom: 16, maxWidth: 260 }}>
+              Entra nel club e trova italiani che vanno dove vai tu.
+            </p>
+            <Link href="/destinazioni" className="font-bold transition-colors"
+              style={{ background: '#A8C468', color: '#1A2010', fontSize: 12, padding: '9px 18px', borderRadius: 20, display: 'inline-block', width: 'fit-content' }}>
+              Unisciti alla community
+            </Link>
+          </div>
         </div>
       </section>
 
-      <hr className="border-gray-100" />
+      {/* DIVISORE */}
+      <div style={{ height: 1, background: '#DDE4D0', margin: '0 24px' }} />
 
-      {/* Consigli recenti */}
-      <section className="py-12">
+      {/* CONSIGLI */}
+      <section className="max-w-5xl mx-auto px-6 py-12">
         <div className="flex justify-between items-end mb-6">
           <div>
-            <h2 className="font-display font-semibold text-2xl mb-1">Consigli recenti dalla community</h2>
-            <p className="text-sm text-gray-500">Tip verificati da chi è appena tornato</p>
+            <h2 className="font-display font-semibold" style={{ fontSize: 26, color: '#1A2010', marginBottom: 4 }}>
+              Dalla community
+            </h2>
+            <p style={{ fontSize: 13, color: '#7A8F6A' }}>Tip verificati da chi è appena tornato</p>
           </div>
-          <Link href="/consigli" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          <Link href="/consigli" className="text-sm font-semibold" style={{ color: '#5A7A35' }}>
             Vedi tutti →
           </Link>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {recentTips.map(tip => (
             <TipCard key={tip.id} tip={tip} />
@@ -136,27 +137,24 @@ export default async function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-gray-900 rounded-2xl p-8 mb-16 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-          <h3 className="font-display font-semibold text-xl text-white mb-2">
-            Sei appena tornato da un viaggio?
-          </h3>
-          <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
-            Condividi i tuoi consigli e aiuta altri italiani a viaggiare meglio.
-            Ogni tip utile guadagna punti community.
-          </p>
-        </div>
-        <div className="flex gap-3 flex-shrink-0">
-          <Link
-            href="/consigli/nuovo"
-            className="inline-flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors"
-          >
-            <Star size={15} />
-            Condividi un consiglio
+      <div className="max-w-5xl mx-auto px-6 mb-16">
+        <div className="rounded-2xl p-8 flex flex-col md:flex-row justify-between items-center gap-6"
+          style={{ background: '#4A5E2F' }}>
+          <div>
+            <h3 className="font-display font-semibold" style={{ fontSize: 22, color: 'white', marginBottom: 6 }}>
+              Sei appena tornato da un viaggio?
+            </h3>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 360 }}>
+              Condividi i tuoi consigli e aiuta altri italiani a viaggiare meglio.
+              La community ti aspetta.
+            </p>
+          </div>
+          <Link href="/consigli/nuovo" className="font-bold flex-shrink-0 transition-colors"
+            style={{ background: '#A8C468', color: '#1A2010', fontSize: 13, padding: '11px 22px', borderRadius: 24, whiteSpace: 'nowrap' }}>
+            Condividi un consiglio →
           </Link>
         </div>
-      </section>
-
+      </div>
     </div>
   )
 }

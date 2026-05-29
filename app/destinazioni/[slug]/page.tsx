@@ -5,6 +5,7 @@ import { getDestinations, getDestinationBySlug, getTips } from '@/lib/data'
 import { MAP_CONFIG, DEFAULT_MAP_CONFIG } from '@/lib/mapconfig'
 import ConsigliSection from '@/components/ConsigliSection'
 import GroupRow from '@/components/GroupRow'
+import { formatMemberCount } from '@/lib/utils'
 
 export const revalidate = 0
 
@@ -73,7 +74,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
         </div>
         <div className="flex gap-6">
           <div className="text-center">
-            <div className="font-display font-semibold text-2xl">{dest.member_count}</div>
+          <div className="font-display font-semibold text-2xl">{formatMemberCount(dest.member_count)}</div>
             <div className="text-xs text-gray-400">italiani qui</div>
           </div>
           <div className="text-center">
@@ -81,7 +82,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
             <div className="text-xs text-gray-400">gruppi attivi</div>
           </div>
           <div className="text-center">
-            <div className="font-display font-semibold text-2xl">{totalMembers}</div>
+          <div className="font-display font-semibold text-2xl">{formatMemberCount(totalMembers)}</div>
             <div className="text-xs text-gray-400">nei gruppi</div>
           </div>
         </div>

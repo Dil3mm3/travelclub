@@ -1,34 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --brand: #1D7A5C;
-  --brand-light: #E8F4F0;
+  --olive: #5A7A35;
+  --olive-light: #A8C468;
+  --olive-dark: #4A5E2F;
+  --olive-bg: #EEF2E6;
+  --olive-badge: #DDE4D0;
+  --page-bg: #F8F9F4;
+  --text-primary: #1A2010;
+  --text-secondary: #5A6B4A;
+  --text-muted: #7A8F6A;
+  --card-border: #DDE4D0;
+  --dark-bg: #1A2010;
 }
 
 @layer base {
   html {
     font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    background-color: #F8F9F4;
+    color: #1A2010;
   }
-
   h1, h2, h3 {
     font-family: 'Fraunces', Georgia, serif;
   }
 }
 
 @layer utilities {
-  .font-display {
-    font-family: 'Fraunces', Georgia, serif;
-  }
-  .font-display-italic {
-    font-family: 'Fraunces', Georgia, serif;
-    font-style: italic;
-  }
+  .font-display { font-family: 'Fraunces', Georgia, serif; }
+  .font-display-italic { font-family: 'Fraunces', Georgia, serif; font-style: italic; }
 }
 
+/* Leaflet z-index fix */
 .leaflet-pane,
 .leaflet-tile,
 .leaflet-marker-icon,
@@ -38,15 +44,6 @@
 .leaflet-map-pane canvas,
 .leaflet-zoom-box,
 .leaflet-image-layer,
-.leaflet-layer {
-  z-index: 0 !important;
-}
-
-.leaflet-control {
-  z-index: 1 !important;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 1 !important;
-}
+.leaflet-layer { z-index: 0 !important; }
+.leaflet-control { z-index: 1 !important; }
+.leaflet-top, .leaflet-bottom { z-index: 1 !important; }

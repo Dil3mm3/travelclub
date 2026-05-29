@@ -6,6 +6,7 @@ import { Destination, Region } from '@/lib/types'
 import { Search, ChevronDown, ChevronUp } from 'lucide-react'
 import clsx from 'clsx'
 import WhatsAppIcon from './WhatsAppIcon'
+import { formatMemberCount } from '@/lib/utils'
 
 const continents: { value: Region | 'tutti'; label: string; emoji: string }[] = [
   { value: 'tutti',   label: 'Tutti',    emoji: '🌍' },
