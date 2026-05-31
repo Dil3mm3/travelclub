@@ -26,19 +26,23 @@ export default function AccediPage() {
 
   return (
     <div className="max-w-sm mx-auto px-6 py-24 text-center">
-      <div className="font-display font-semibold text-3xl mb-2">
-        travelcl<span className="italic text-gray-400">ub</span>
+      <div className="flex items-baseline justify-center gap-0.5 mb-2">
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 28, color: '#1A2010' }}>travel</span>
+        <span style={{ fontFamily: "'Fraunces', serif", fontStyle: 'italic', fontWeight: 400, fontSize: 28, color: '#A8C468' }}>club</span>
       </div>
-      <p className="text-gray-500 text-sm mb-10">
+      <p style={{ fontSize: 14, color: '#7A8F6A', marginBottom: 36 }}>
         Accedi per condividere consigli e unirti alla community.
       </p>
       <button
         onClick={handleGoogleLogin}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 px-4 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-60"
+        className="w-full flex items-center justify-center gap-3 transition-colors disabled:opacity-60"
+        style={{ border: '1px solid #DDE4D0', borderRadius: 12, padding: '12px 16px', fontSize: 13, fontWeight: 500, background: 'white', color: '#1A2010' }}
+        onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#F0F4E8' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'white' }}
       >
         {loading ? (
-          <Loader2 size={18} className="animate-spin" />
+          <Loader2 size={18} className="animate-spin" style={{ color: '#5A7A35' }} />
         ) : (
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -49,8 +53,12 @@ export default function AccediPage() {
         )}
         {loading ? 'Accesso in corso...' : 'Continua con Google'}
       </button>
-      {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
-      <p className="text-xs text-gray-400 mt-8 leading-relaxed">
+      {error && (
+        <p className="flex items-center justify-center gap-1 mt-4" style={{ fontSize: 13, color: '#C1440E' }}>
+          {error}
+        </p>
+      )}
+      <p style={{ fontSize: 11, color: '#7A8F6A', marginTop: 28, lineHeight: 1.6 }}>
         Accedendo accetti i termini di utilizzo di travelclub.
       </p>
     </div>

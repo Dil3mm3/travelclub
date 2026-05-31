@@ -17,13 +17,14 @@ export default function AuthButton() {
     window.location.href = '/'
   }
 
-  if (loading) return <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />
+  if (loading) return <div className="w-8 h-8 rounded-full animate-pulse" style={{ background: '#DDE4D0' }} />
 
   if (!user) {
     return (
       <Link
         href="/accedi"
-        className="text-sm bg-gray-900 text-white px-4 py-1.5 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+        className="text-sm font-medium transition-colors"
+        style={{ background: '#1A2010', color: 'white', padding: '6px 16px', borderRadius: 8 }}
       >
         Accedi
       </Link>
@@ -40,7 +41,8 @@ export default function AuthButton() {
     <div className="relative">
       <button
         onClick={() => setMenuOpen(v => !v)}
-        className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gray-900 text-white text-xs font-semibold hover:bg-gray-700 transition-colors"
+        className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-xs font-semibold transition-colors"
+        style={{ background: '#1A2010', color: 'white' }}
       >
         {user.user_metadata?.avatar_url ? (
           <img
@@ -54,18 +56,22 @@ export default function AuthButton() {
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 top-10 w-52 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
-          <div className="px-4 py-2.5 border-b border-gray-100">
-            <p className="text-xs font-medium text-gray-700 truncate">
+        <div className="absolute right-0 top-10 w-52 rounded-xl shadow-lg py-1 z-50"
+          style={{ background: 'white', border: '1px solid #DDE4D0' }}>
+          <div className="px-4 py-2.5" style={{ borderBottom: '1px solid #DDE4D0' }}>
+            <p className="truncate" style={{ fontSize: 12, fontWeight: 600, color: '#1A2010' }}>
               {user.user_metadata?.full_name ?? user.email}
             </p>
-            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+            <p className="truncate" style={{ fontSize: 11, color: '#7A8F6A' }}>{user.email}</p>
           </div>
           {isAdmin && (
             <Link
               href="/admin"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 transition-colors"
+              style={{ fontSize: 13, color: '#5A6B4A' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F0F4E8' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
             >
               <Settings size={14} />
               Pannello admin
@@ -73,7 +79,10 @@ export default function AuthButton() {
           )}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center gap-2 px-4 py-2 transition-colors"
+            style={{ fontSize: 13, color: '#5A6B4A' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F0F4E8' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
           >
             <LogOut size={14} />
             Esci

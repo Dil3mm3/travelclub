@@ -27,17 +27,17 @@ export default async function ProponiGruppoPage({ params }: Props) {
     <div className="max-w-xl mx-auto px-6 py-12">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-4xl">{dest.flag_emoji}</span>
+          <span style={{ fontSize: 40, lineHeight: 1 }}>{dest.flag_emoji}</span>
           <div>
-            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#A8C468', marginBottom: 6 }}>
               {dest.name}
             </p>
-            <h1 className="font-display font-semibold text-2xl">
+            <h1 className="font-display font-semibold" style={{ fontSize: 24, color: '#1A2010', lineHeight: 1.1 }}>
               Proponi un gruppo WhatsApp
             </h1>
           </div>
         </div>
-        <p className="text-sm text-gray-500 leading-relaxed">
+        <p style={{ fontSize: 13, color: '#7A8F6A', lineHeight: 1.6 }}>
           Conosci un gruppo WhatsApp attivo per {dest.name}? Aggiungilo alla directory —
           dopo una verifica manuale lo pubblicheremo sulla pagina.
         </p>
