@@ -11,7 +11,7 @@ export const revalidate = 0
 
 const DestinationMap = dynamic(() => import('@/components/DestinationMap'), {
   ssr: false,
-  loading: () => <div className="w-full h-64 rounded-xl bg-gray-50 animate-pulse" />,
+  loading: () => <div className="w-full h-64 rounded-xl animate-pulse" style={{ background: '#EEF2E6' }} />,
 })
 
 interface Props {
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props) {
   if (!dest) return {}
   return {
     title: `${dest.name} — travelclub`,
-    description: `Gruppi WhatsApp e consigli di viaggio per ${dest.name}. Community italiana di viaggiatori.`,
+    description: `Gruppi WhatsApp e consigli di viaggio per ${dest.name}. Il club degli italiani che viaggiano.`,
   }
 }
 
@@ -43,119 +43,173 @@ export default async function DestinazioneDetailPage({ params }: Props) {
   const mapConfig = MAP_CONFIG[dest.slug] ?? DEFAULT_MAP_CONFIG
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div>
+      {/* HERO destinazione */}
+      <div style={{ background: '#1A2010', padding: '32px 24px 28px' }}>
+        <div className="max-w-5xl mx-auto">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 mb-6" style={{ fontSize: 12 }}>
+            <Link href="/destinazioni" style={{ color: '#A8C468' }} className="hover:opacity-80 transition-opacity">
+              Destinazioni
+            </Link>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>/</span>
+            <span style={{ color: 'rgba(255,255,255,0.6)' }}>{dest.name}</span>
+          </div>
 
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
-        <Link href="/destinazioni" className="hover:text-gray-700 transition-colors">Destinazioni</Link>
-        <span>/</span>
-        <span className="text-gray-700">{dest.name}</span>
-      </div>
-
-      <div className="mb-8">
-        <div className="flex items-center gap-5 mb-4">
-          <span className="text-6xl">{dest.flag_emoji}</span>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="font-display font-semibold text-4xl">{dest.name}</h1>
-              {dest.is_trending && (
-                <span className="text-xs font-medium px-2.5 py-1 bg-orange-50 text-orange-700 rounded-full">Trending</span>
-              )}
-              {dest.is_emerging && (
-                <span className="text-xs font-medium px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full">Emergente</span>
-              )}
+          <div className="flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex items-center gap-5">
+              <span style={{ fontSize: 64, lineHeight: 1 }}>{dest.flag_emoji}</span>
+              <div>
+                <div className="flex items-center gap-3 flex-wrap mb-2">
+                  <h1 className="font-display font-bold" style={{ fontSize: 40, color: 'white', lineHeight: 1 }}>{dest.name}</h1>
+                  {dest.is_trending && (
+                    <span style={{ background: '#FEF9C3', color: '#854D0E', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20 }}>🔥 Trending</span>
+                  )}
+                  {dest.is_emerging && (
+                    <span style={{ background: '#EEF2E6', color: '#4A5E2F', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20 }}>✦ Emergente</span>
+                  )}
+                </div>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>{dest.cities.join(' · ')}</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {dest.tags.map(tag => (
+                    <span key={tag} style={{ background: 'rgba(168,196,104,0.15)', color: '#A8C468', fontSize: 11, fontWeight: 500, padding: '3px 10px', borderRadius: 20 }}>{tag}</span>
+                  ))}
+                </div>
+              </div>
             </div>
-            <p className="text-gray-400 text-sm">{dest.cities.join(' · ')}</p>
-            <div className="flex gap-1.5 mt-3 flex-wrap">
-              {dest.tags.map(tag => (
-                <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">{tag}</span>
+
+            {/* Stats pill — visibili solo su desktop */}
+            <div className="hidden md:flex gap-6">
+              {[
+                { num: formatMemberCount(dest.member_count), label: 'italiani qui' },
+                { num: activeGroups.length.toString(), label: 'gruppi attivi' },
+                { num: formatMemberCount(totalMembers), label: 'nei gruppi' },
+              ].map(({ num, label }) => (
+                <div key={label} className="text-center">
+                  <div className="font-display font-bold" style={{ fontSize: 22, color: '#A8C468' }}>{num}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+                </div>
               ))}
             </div>
           </div>
-        </div>
-        <div className="flex gap-6">
-          <div className="text-center">
-          <div className="font-display font-semibold text-2xl">{formatMemberCount(dest.member_count)}</div>
-            <div className="text-xs text-gray-400">italiani qui</div>
-          </div>
-          <div className="text-center">
-            <div className="font-display font-semibold text-2xl">{activeGroups.length}</div>
-            <div className="text-xs text-gray-400">gruppi attivi</div>
-          </div>
-          <div className="text-center">
-          <div className="font-display font-semibold text-2xl">{formatMemberCount(totalMembers)}</div>
-            <div className="text-xs text-gray-400">nei gruppi</div>
+
+          {/* Stats mobile */}
+          <div className="flex gap-6 mt-5 md:hidden">
+            {[
+              { num: formatMemberCount(dest.member_count), label: 'italiani qui' },
+              { num: activeGroups.length.toString(), label: 'gruppi attivi' },
+              { num: formatMemberCount(totalMembers), label: 'nei gruppi' },
+            ].map(({ num, label }) => (
+              <div key={label} className="text-center">
+                <div className="font-display font-bold" style={{ fontSize: 20, color: '#A8C468' }}>{num}</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Mappa */}
-      <div className="mb-8">
-        <h2 className="font-display font-semibold text-lg mb-3">Mappa e gruppi per città</h2>
-        <DestinationMap
-          cities={dest.cities}
-          groups={dest.groups}
-          countryName={dest.name}
-          center={mapConfig.center}
-          zoom={mapConfig.zoom}
-          destinationSlug={dest.slug}
-        />
-        <p className="text-xs text-gray-400 mt-2">Clicca sui marker per vedere i gruppi disponibili in ogni città.</p>
-      </div>
+      {/* CONTENUTO */}
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <ConsigliSection
-            tips={destTips}
-            destinationSlug={dest.slug}
-            destinationName={dest.name}
-            flagEmoji={dest.flag_emoji}
-          />
-        </div>
+          {/* Colonna principale — mappa + consigli */}
+          <div className="lg:col-span-2 space-y-8">
 
-        <div className="space-y-6">
-          <div className="border border-gray-100 rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <h3 className="font-medium text-base">Gruppi WhatsApp</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Entra senza account</p>
+            {/* Mappa */}
+            <div>
+              <h2 className="font-display font-semibold mb-3" style={{ fontSize: 18, color: '#1A2010' }}>
+                Mappa e gruppi per città
+              </h2>
+              <DestinationMap
+                cities={dest.cities}
+                groups={dest.groups}
+                countryName={dest.name}
+                center={mapConfig.center}
+                zoom={mapConfig.zoom}
+                destinationSlug={dest.slug}
+              />
+              <p style={{ fontSize: 11, color: '#7A8F6A', marginTop: 6 }}>
+                Clicca sui marker per vedere i gruppi disponibili in ogni città.
+              </p>
             </div>
-            <div className="divide-y divide-gray-100">
-              {activeGroups.map(group => (
-                <GroupRow key={group.id} group={group} destinationName={dest.name} />
-              ))}
+
+            {/* Consigli */}
+            <ConsigliSection
+              tips={destTips}
+              destinationSlug={dest.slug}
+              destinationName={dest.name}
+              flagEmoji={dest.flag_emoji}
+            />
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-5">
+
+            {/* Gruppi WhatsApp */}
+            <div className="overflow-hidden" style={{ border: '1px solid #DDE4D0', borderRadius: 14 }}>
+              <div style={{ padding: '14px 20px', borderBottom: '1px solid #DDE4D0', background: '#F0F4E8' }}>
+                <h3 className="font-semibold" style={{ fontSize: 14, color: '#1A2010' }}>Gruppi WhatsApp</h3>
+                <p style={{ fontSize: 11, color: '#7A8F6A', marginTop: 2 }}>Entra senza account</p>
+              </div>
+              <div style={{ background: 'white' }}>
+                {activeGroups.length > 0 ? (
+                  <div className="divide-y" style={{ borderColor: '#EEF2E6' }}>
+                    {activeGroups.map(group => (
+                      <GroupRow key={group.id} group={group} destinationName={dest.name} />
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ padding: '20px', textAlign: 'center', color: '#7A8F6A', fontSize: 12 }}>
+                    Nessun gruppo ancora.
+                  </div>
+                )}
+              </div>
+              {fullGroups.length > 0 && (
+                <div style={{ borderTop: '1px solid #EEF2E6', background: '#F8F9F4' }}>
+                  {fullGroups.map(group => (
+                    <GroupRow key={group.id} group={group} destinationName={dest.name} />
+                  ))}
+                </div>
+              )}
+              <div style={{ padding: '10px 20px', background: '#F8F9F4', borderTop: '1px solid #EEF2E6' }}>
+                <Link
+                  href={`/destinazioni/${dest.slug}/proponi-gruppo`}
+                  style={{ fontSize: 12, color: '#5A7A35', fontWeight: 600 }}
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  + Proponi un nuovo gruppo
+                </Link>
+              </div>
             </div>
-            {fullGroups.length > 0 && (
-              <div className="divide-y divide-gray-100 bg-gray-50">
-                {fullGroups.map(group => (
-                  <GroupRow key={group.id} group={group} destinationName={dest.name} />
+
+            {/* Info utili */}
+            <div style={{ border: '1px solid #DDE4D0', borderRadius: 14, padding: '16px 20px', background: 'white' }}>
+              <h3 className="font-semibold mb-4" style={{ fontSize: 14, color: '#1A2010' }}>Info utili</h3>
+              <div className="space-y-3">
+                {[
+                  { label: 'Regione', value: dest.region.charAt(0).toUpperCase() + dest.region.slice(1) },
+                  { label: 'Città principali', value: dest.cities.slice(0, 2).join(', ') },
+                  { label: 'Community', value: `${formatMemberCount(dest.member_count)} italiani` },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span style={{ fontSize: 12, color: '#7A8F6A' }}>{label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1A2010', textAlign: 'right', maxWidth: '60%' }}>{value}</span>
+                  </div>
                 ))}
               </div>
-            )}
-            <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
-              <Link
-                href={`/destinazioni/${dest.slug}/proponi-gruppo`}
-                className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
-              >
-                + Proponi un nuovo gruppo
+            </div>
+
+            {/* CTA regole */}
+            <div style={{ border: '1px solid #DDE4D0', borderRadius: 14, padding: '16px 20px', background: '#F0F4E8' }}>
+              <p style={{ fontSize: 12, color: '#5A6B4A', lineHeight: 1.6, marginBottom: 10 }}>
+                Rispetta le regole della community per mantenere i gruppi attivi e utili per tutti.
+              </p>
+              <Link href="/regole" style={{ fontSize: 12, color: '#5A7A35', fontWeight: 600 }}>
+                Leggi le regole →
               </Link>
             </div>
-          </div>
 
-          <div className="border border-gray-100 rounded-xl p-5">
-            <h3 className="font-medium text-base mb-4">Info utili</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Regione</span>
-                <span className="font-medium capitalize">{dest.region}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Città principali</span>
-                <span className="font-medium text-right">{dest.cities.slice(0, 2).join(', ')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Community</span>
-                <span className="font-medium">{dest.member_count} italiani</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

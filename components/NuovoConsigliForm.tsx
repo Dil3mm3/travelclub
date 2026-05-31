@@ -21,15 +21,11 @@ const categories = [
   { value: 'altro',      label: '💡 Altro' },
 ]
 
-const suggestedTags = [
-  'Pratico', 'Local', 'Budget', 'Off-track', 'Imperdibile',
-  'Attenzione', 'Risparmio', 'Cibo', 'Natura', 'Sicurezza',
-]
+const suggestedTags = ['Pratico', 'Local', 'Budget', 'Off-track', 'Imperdibile', 'Attenzione', 'Risparmio', 'Cibo']
 
 export default function NuovoConsigliForm({ destinations }: Props) {
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-
   const [form, setForm] = useState({
     destination_slug: '',
     author_name: '',
@@ -39,9 +35,8 @@ export default function NuovoConsigliForm({ destinations }: Props) {
     custom_tag: '',
   })
 
-  const update = (field: string, value: string) => {
+  const update = (field: string, value: string) =>
     setForm(prev => ({ ...prev, [field]: value }))
-  }
 
   const toggleTag = (tag: string) => {
     setForm(prev => ({
@@ -58,31 +53,18 @@ export default function NuovoConsigliForm({ destinations }: Props) {
     setForm(prev => ({ ...prev, tags: [...prev.tags, tag], custom_tag: '' }))
   }
 
-  const removeTag = (tag: string) => {
+  const removeTag = (tag: string) =>
     setForm(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }))
-  }
 
   const selectedDest = destinations.find(d => d.slug === form.destination_slug)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMsg('')
-
-    if (!form.destination_slug) {
-      setErrorMsg('Seleziona una destinazione.')
-      return
-    }
-    if (!form.author_name.trim()) {
-      setErrorMsg('Inserisci il tuo nome o nickname.')
-      return
-    }
-    if (form.content.trim().length < 30) {
-      setErrorMsg('Il consiglio deve essere di almeno 30 caratteri.')
-      return
-    }
-
+    if (!form.destination_slug) { setErrorMsg('Seleziona una destinazione.'); return }
+    if (!form.author_name.trim()) { setErrorMsg('Inserisci il tuo nome o nickname.'); return }
+    if (form.content.trim().length < 30) { setErrorMsg('Il consiglio deve essere di almeno 30 caratteri.'); return }
     setStatus('loading')
-
     const supabase = createClient()
     const { error } = await supabase.from('tip_submissions').insert({
       destination_slug: form.destination_slug,
@@ -94,39 +76,28 @@ export default function NuovoConsigliForm({ destinations }: Props) {
       tags: form.tags,
       status: 'pending',
     })
-
-    if (error) {
-      setStatus('error')
-      setErrorMsg('Errore durante l\'invio. Riprova tra poco.')
-      return
-    }
-
+    if (error) { setStatus('error'); setErrorMsg('Errore durante l\'invio. Riprova.'); return }
     setStatus('success')
   }
 
+  const labelStyle = { fontSize: 12, fontWeight: 600, color: '#5A6B4A', display: 'block', marginBottom: 6 } as const
+  const inputStyle = { width: '100%', padding: '10px 14px', fontSize: 13, border: '1px solid #DDE4D0', borderRadius: 10, background: 'white', color: '#1A2010', outline: 'none' } as const
+
   if (status === 'success') {
     return (
-      <div className="border border-green-100 bg-green-50 rounded-2xl p-8 text-center">
-        <CheckCircle size={40} className="text-green-500 mx-auto mb-4" />
-        <h2 className="font-display font-semibold text-xl mb-2">Consiglio inviato!</h2>
-        <p className="text-sm text-gray-500 leading-relaxed mb-6">
-          Grazie! Il tuo consiglio verrà revisionato entro 24-48 ore e pubblicato
-          sulla pagina di {selectedDest?.name}.
+      <div className="rounded-2xl p-8 text-center" style={{ background: '#F0F4E8', border: '1px solid #DDE4D0' }}>
+        <CheckCircle size={40} className="mx-auto mb-4" style={{ color: '#5A7A35' }} />
+        <h2 className="font-display font-semibold mb-2" style={{ fontSize: 20, color: '#1A2010' }}>Consiglio inviato!</h2>
+        <p style={{ fontSize: 13, color: '#7A8F6A', lineHeight: 1.6, marginBottom: 20 }}>
+          Grazie! Il tuo consiglio verrà revisionato entro 24-48 ore e pubblicato sulla pagina di {selectedDest?.name}.
         </p>
-        <div className="flex gap-3 justify-center">
-          <Link
-            href={`/destinazioni/${form.destination_slug}`}
-            className="inline-block bg-gray-900 text-white text-sm px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
-          >
+        <div className="flex gap-3 justify-center flex-wrap">
+          <Link href={`/destinazioni/${form.destination_slug}`}
+            style={{ background: '#5A7A35', color: 'white', fontSize: 13, padding: '10px 20px', borderRadius: 20, fontWeight: 700 }}>
             ← Torna a {selectedDest?.name}
           </Link>
-          <button
-            onClick={() => {
-              setStatus('idle')
-              setForm({ destination_slug: '', author_name: '', content: '', category: 'altro', tags: [], custom_tag: '' })
-            }}
-            className="inline-block border border-gray-200 text-gray-600 text-sm px-5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={() => { setStatus('idle'); setForm({ destination_slug: '', author_name: '', content: '', category: 'altro', tags: [], custom_tag: '' }) }}
+            style={{ border: '1px solid #DDE4D0', color: '#5A6B4A', fontSize: 13, padding: '10px 20px', borderRadius: 20, background: 'white' }}>
             Aggiungi un altro
           </button>
         </div>
@@ -139,55 +110,35 @@ export default function NuovoConsigliForm({ destinations }: Props) {
 
       {/* Destinazione */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Destinazione <span className="text-red-400">*</span>
-        </label>
-        <select
-          value={form.destination_slug}
-          onChange={e => update('destination_slug', e.target.value)}
-          className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-gray-400 transition-colors bg-white"
-        >
+        <label style={labelStyle}>Destinazione <span style={{ color: '#C1440E' }}>*</span></label>
+        <select value={form.destination_slug} onChange={e => update('destination_slug', e.target.value)}
+          style={{ ...inputStyle, appearance: 'auto' }}>
           <option value="">Seleziona un paese...</option>
           {destinations.map(d => (
-            <option key={d.slug} value={d.slug}>
-              {d.flag_emoji} {d.name}
-            </option>
+            <option key={d.slug} value={d.slug}>{d.flag_emoji} {d.name}</option>
           ))}
         </select>
       </div>
 
       {/* Nome */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Il tuo nome o nickname <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={form.author_name}
-          onChange={e => update('author_name', e.target.value)}
-          placeholder="es. Marco R."
-          maxLength={40}
-          className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-gray-400 transition-colors"
-        />
+        <label style={labelStyle}>Il tuo nome o nickname <span style={{ color: '#C1440E' }}>*</span></label>
+        <input type="text" value={form.author_name} onChange={e => update('author_name', e.target.value)}
+          placeholder="es. Marco R." maxLength={40} style={inputStyle} />
       </div>
 
       {/* Categoria */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Categoria
-        </label>
+        <label style={labelStyle}>Categoria</label>
         <div className="grid grid-cols-3 gap-2">
           {categories.map(cat => (
-            <button
-              key={cat.value}
-              type="button"
-              onClick={() => update('category', cat.value)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium border transition-colors text-left ${
-                form.category === cat.value
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
-              }`}
-            >
+            <button key={cat.value} type="button" onClick={() => update('category', cat.value)}
+              style={{
+                padding: '8px', borderRadius: 10, fontSize: 12, fontWeight: 500, textAlign: 'left',
+                border: form.category === cat.value ? 'none' : '1px solid #DDE4D0',
+                background: form.category === cat.value ? '#5A7A35' : 'white',
+                color: form.category === cat.value ? 'white' : '#5A6B4A',
+              }}>
               {cat.label}
             </button>
           ))}
@@ -196,39 +147,27 @@ export default function NuovoConsigliForm({ destinations }: Props) {
 
       {/* Contenuto */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Il tuo consiglio <span className="text-red-400">*</span>
-        </label>
-        <textarea
-          value={form.content}
-          onChange={e => update('content', e.target.value)}
-          placeholder="Scrivi un consiglio specifico e utile. Es: 'A Kyoto evitate il Fushimi Inari nel weekend — andate all'alba il lunedì, ci sarete quasi soli e la luce è perfetta.'"
-          rows={5}
-          maxLength={500}
-          className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-gray-400 transition-colors resize-none"
-        />
+        <label style={labelStyle}>Il tuo consiglio <span style={{ color: '#C1440E' }}>*</span></label>
+        <textarea value={form.content} onChange={e => update('content', e.target.value)}
+          placeholder="Scrivi un consiglio specifico e utile. Es: 'A Kyoto evitate il Fushimi Inari nel weekend — andate all'alba il lunedì, ci sarete quasi soli.'"
+          rows={5} maxLength={500}
+          style={{ ...inputStyle, resize: 'none', lineHeight: 1.6 }} />
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-gray-400">Minimo 30 caratteri</p>
-          <p className={`text-xs ${form.content.length > 450 ? 'text-orange-500' : 'text-gray-400'}`}>
-            {form.content.length}/500
-          </p>
+          <span style={{ fontSize: 11, color: '#7A8F6A' }}>Minimo 30 caratteri</span>
+          <span style={{ fontSize: 11, color: form.content.length > 450 ? '#C1440E' : '#7A8F6A' }}>{form.content.length}/500</span>
         </div>
       </div>
 
       {/* Tags */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Tag <span className="text-gray-400 font-normal">(max 3)</span>
-        </label>
+        <label style={labelStyle}>Tag <span style={{ fontWeight: 400, color: '#7A8F6A' }}>(max 3)</span></label>
         {form.tags.length > 0 && (
           <div className="flex gap-2 flex-wrap mb-2">
             {form.tags.map(tag => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1.5 text-xs bg-gray-900 text-white px-2.5 py-1 rounded-full"
-              >
+              <span key={tag} className="inline-flex items-center gap-1.5"
+                style={{ fontSize: 11, background: '#5A7A35', color: 'white', padding: '3px 10px', borderRadius: 20 }}>
                 {tag}
-                <button type="button" onClick={() => removeTag(tag)}>
+                <button type="button" onClick={() => removeTag(tag)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white', padding: 0 }}>
                   <X size={11} />
                 </button>
               </span>
@@ -237,73 +176,51 @@ export default function NuovoConsigliForm({ destinations }: Props) {
         )}
         <div className="flex gap-1.5 flex-wrap mb-2">
           {suggestedTags.map(tag => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => toggleTag(tag)}
+            <button key={tag} type="button" onClick={() => toggleTag(tag)}
               disabled={form.tags.length >= 3 && !form.tags.includes(tag)}
-              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                form.tags.includes(tag)
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400 disabled:opacity-40'
-              }`}
-            >
+              style={{
+                fontSize: 11, padding: '3px 10px', borderRadius: 20,
+                border: form.tags.includes(tag) ? 'none' : '1px solid #DDE4D0',
+                background: form.tags.includes(tag) ? '#5A7A35' : 'white',
+                color: form.tags.includes(tag) ? 'white' : '#5A6B4A',
+                opacity: form.tags.length >= 3 && !form.tags.includes(tag) ? 0.4 : 1,
+              }}>
               {tag}
             </button>
           ))}
         </div>
         <div className="flex gap-2">
-          <input
-            type="text"
-            value={form.custom_tag}
-            onChange={e => update('custom_tag', e.target.value)}
+          <input type="text" value={form.custom_tag} onChange={e => update('custom_tag', e.target.value)}
             onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
-            placeholder="Tag personalizzato..."
-            maxLength={20}
+            placeholder="Tag personalizzato..." maxLength={20}
             disabled={form.tags.length >= 3}
-            className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg outline-none focus:border-gray-400 transition-colors disabled:opacity-40"
-          />
-          <button
-            type="button"
-            onClick={addCustomTag}
+            style={{ flex: 1, padding: '6px 12px', fontSize: 12, border: '1px solid #DDE4D0', borderRadius: 8, background: 'white', outline: 'none', opacity: form.tags.length >= 3 ? 0.4 : 1 }} />
+          <button type="button" onClick={addCustomTag}
             disabled={!form.custom_tag.trim() || form.tags.length >= 3}
-            className="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-40"
-          >
+            style={{ fontSize: 12, padding: '6px 14px', borderRadius: 8, background: '#EEF2E6', color: '#5A6B4A', border: 'none', opacity: !form.custom_tag.trim() || form.tags.length >= 3 ? 0.4 : 1 }}>
             Aggiungi
           </button>
         </div>
       </div>
 
       {/* Disclaimer */}
-      <div className="bg-gray-50 rounded-xl p-4 text-xs text-gray-500 leading-relaxed">
-        Inviando dichiari che il consiglio è basato su esperienza personale e non contiene
-        contenuti promozionali o inappropriati. I consigli spam verranno rimossi.
+      <div style={{ background: '#F0F4E8', borderRadius: 10, padding: '12px 14px', fontSize: 12, color: '#5A6B4A', lineHeight: 1.6 }}>
+        Inviando dichiari che il consiglio è basato su esperienza personale e non contiene contenuti promozionali.
       </div>
 
-      {/* Errore */}
       {errorMsg && (
-        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">
-          <AlertCircle size={15} />
-          {errorMsg}
+        <div className="flex items-center gap-2" style={{ fontSize: 13, color: '#C1440E', background: '#FBF0EB', padding: '10px 14px', borderRadius: 10 }}>
+          <AlertCircle size={15} />{errorMsg}
         </div>
       )}
 
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={status === 'loading'}
-        className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white py-3 rounded-lg text-sm font-semibold hover:bg-gray-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {status === 'loading' ? (
-          <>
-            <Loader2 size={16} className="animate-spin" />
-            Invio in corso...
-          </>
-        ) : (
-          '✈️ Condividi il consiglio'
-        )}
+      <button type="submit" disabled={status === 'loading'}
+        className="w-full flex items-center justify-center gap-2 font-semibold"
+        style={{ background: '#5A7A35', color: 'white', padding: '12px', borderRadius: 24, border: 'none', fontSize: 13, opacity: status === 'loading' ? 0.6 : 1 }}>
+        {status === 'loading'
+          ? <><Loader2 size={16} className="animate-spin" />Invio in corso...</>
+          : '✈️ Condividi il consiglio'}
       </button>
-
     </form>
   )
 }
