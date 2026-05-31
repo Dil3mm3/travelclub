@@ -13,6 +13,7 @@ interface NominatimResult {
     village?: string
     municipality?: string
     country?: string
+    state?: string
   }
   lat: string
   lon: string

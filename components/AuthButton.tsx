@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from './AuthProvider'
 import Link from 'next/link'
+import Image from 'next/image'
 import { LogOut, Settings } from 'lucide-react'
 
 export default function AuthButton() {
@@ -45,11 +46,13 @@ export default function AuthButton() {
         style={{ background: '#1A2010', color: 'white' }}
       >
         {user.user_metadata?.avatar_url ? (
-          <img
+          <Image
             src={user.user_metadata.avatar_url}
             alt={initials}
+            width={32}
+            height={32}
             className="w-full h-full object-cover"
-            onError={e => { e.currentTarget.style.display = 'none' }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
           />
         ) : null}
         <span className={user.user_metadata?.avatar_url ? 'sr-only' : ''}>{initials}</span>
