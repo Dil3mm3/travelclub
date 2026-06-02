@@ -46,7 +46,7 @@ export default function GroupRow({ group, destinationName }: Props) {
         </div>
 
         {!group.is_active ? (
-          <span style={{ fontSize: 11, padding: '5px 12px', background: '#F3F4F6', color: '#9CA3AF', borderRadius: 20, flexShrink: 0, cursor: 'not-allowed' }}
+          <span style={{ fontSize: 11, padding: '5px 12px', background: '#EEF2E6', color: '#7A8F6A', borderRadius: 20, flexShrink: 0, cursor: 'not-allowed' }}
             title="Gruppo momentaneamente disattivato">
             Non disponibile
           </span>
@@ -58,7 +58,7 @@ export default function GroupRow({ group, destinationName }: Props) {
             Entra
           </a>
         ) : (
-          <span style={{ fontSize: 11, padding: '5px 12px', background: '#F3F4F6', color: '#9CA3AF', borderRadius: 20, flexShrink: 0 }}>
+          <span style={{ fontSize: 11, padding: '5px 12px', background: '#EEF2E6', color: '#7A8F6A', borderRadius: 20, flexShrink: 0 }}>
             Pieno
           </span>
         )}
@@ -70,7 +70,7 @@ export default function GroupRow({ group, destinationName }: Props) {
           <div style={{
             height: '100%', borderRadius: 99,
             width: `${percentage}%`,
-            background: isFull ? '#EF4444' : !group.is_active ? '#E5E7EB' : '#25D366',
+            background: isFull ? '#C1440E' : !group.is_active ? '#DDE4D0' : '#25D366',
             transition: 'width 0.3s ease',
           }} />
         </div>
