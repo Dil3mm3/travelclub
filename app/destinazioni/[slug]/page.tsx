@@ -109,44 +109,50 @@ export default async function DestinazioneDetailPage({ params }: Props) {
         </div>
       </div>
 
+      {/* INDICE ANCORATO */}
+      <div className="sticky top-14 z-30 lg:hidden" style={{ background: '#F8F9F4', borderBottom: '1px solid #DDE4D0' }}>
+        <div className="flex overflow-x-auto px-6 gap-1 py-2" style={{ scrollbarWidth: 'none' }}>
+          {[
+            { href: '#gruppi', label: 'Gruppi WhatsApp' },
+            { href: '#mappa',  label: 'Mappa' },
+            { href: '#consigli', label: 'Consigli' },
+          ].map(({ href, label }) => (
+            <a key={href} href={href}
+              className="flex-shrink-0 font-medium transition-colors"
+              style={{ fontSize: 12, padding: '5px 14px', borderRadius: 20, border: '1px solid #DDE4D0', color: '#5A6B4A', background: 'white', whiteSpace: 'nowrap' }}>
+              {label}
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* CONTENUTO */}
       <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* 3 blocchi indipendenti — DOM order = mobile order: Mappa → Gruppi → Consigli
+            Desktop: Mappa col1-2 row1 | Gruppi col3 row1-2 | Consigli col1-2 row2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto] gap-8">
 
-          {/* Colonna principale — mappa + consigli */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* Mappa */}
-            <div>
-              <h2 className="font-display font-semibold mb-3" style={{ fontSize: 18, color: '#1A2010' }}>
-                Mappa e gruppi per città
-              </h2>
-              <DestinationMap
-                cities={dest.cities}
-                groups={dest.groups}
-                countryName={dest.name}
-                center={mapConfig.center}
-                zoom={mapConfig.zoom}
-                destinationSlug={dest.slug}
-              />
-              <p style={{ fontSize: 11, color: '#7A8F6A', marginTop: 6 }}>
-                Clicca sui marker per vedere i gruppi disponibili in ogni città.
-              </p>
-            </div>
-
-            {/* Consigli */}
-            <ConsigliSection
-              tips={destTips}
+          {/* 1. Mappa */}
+          <div id="mappa" className="lg:col-start-1 lg:col-span-2 lg:row-start-1">
+            <h2 className="font-display font-semibold mb-3" style={{ fontSize: 18, color: '#1A2010' }}>
+              Mappa e gruppi per città
+            </h2>
+            <DestinationMap
+              cities={dest.cities}
+              groups={dest.groups}
+              countryName={dest.name}
+              center={mapConfig.center}
+              zoom={mapConfig.zoom}
               destinationSlug={dest.slug}
-              destinationName={dest.name}
-              flagEmoji={dest.flag_emoji}
             />
+            <p style={{ fontSize: 11, color: '#7A8F6A', marginTop: 6 }}>
+              Clicca sui marker per vedere i gruppi disponibili in ogni città.
+            </p>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-5">
+          {/* 2. Sidebar gruppi — col3, copre entrambe le righe su desktop */}
+          <div id="gruppi" className="space-y-5 lg:col-start-3 lg:row-start-1 lg:row-span-2">
 
-            {/* Gruppi WhatsApp */}
             <div className="overflow-hidden" style={{ border: '1px solid #DDE4D0', borderRadius: 14 }}>
               <div style={{ padding: '14px 20px', borderBottom: '1px solid #DDE4D0', background: '#F0F4E8' }}>
                 <h3 className="font-semibold" style={{ fontSize: 14, color: '#1A2010' }}>Gruppi WhatsApp</h3>
@@ -183,7 +189,6 @@ export default async function DestinazioneDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Info utili */}
             <div style={{ border: '1px solid #DDE4D0', borderRadius: 14, padding: '16px 20px', background: 'white' }}>
               <h3 className="font-semibold mb-4" style={{ fontSize: 14, color: '#1A2010' }}>Info utili</h3>
               <div className="space-y-3">
@@ -200,7 +205,6 @@ export default async function DestinazioneDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* CTA regole */}
             <div style={{ border: '1px solid #DDE4D0', borderRadius: 14, padding: '16px 20px', background: '#F0F4E8' }}>
               <p style={{ fontSize: 12, color: '#5A6B4A', lineHeight: 1.6, marginBottom: 10 }}>
                 Rispetta le regole della community per mantenere i gruppi attivi e utili per tutti.
@@ -209,8 +213,18 @@ export default async function DestinazioneDetailPage({ params }: Props) {
                 Leggi le regole →
               </Link>
             </div>
-
           </div>
+
+          {/* 3. Consigli */}
+          <div id="consigli" className="lg:col-start-1 lg:col-span-2 lg:row-start-2">
+            <ConsigliSection
+              tips={destTips}
+              destinationSlug={dest.slug}
+              destinationName={dest.name}
+              flagEmoji={dest.flag_emoji}
+            />
+          </div>
+
         </div>
       </div>
     </div>
