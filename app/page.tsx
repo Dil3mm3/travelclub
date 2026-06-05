@@ -60,7 +60,7 @@ export default async function HomePage() {
               <StatsHero
                 activeGroups={stats.activeGroups}
                 destinations={stats.destinations}
-                totalMembers={Math.floor(stats.totalMembers / 100) * 100}
+                totalMembers={stats.totalMembers}
                 tips={stats.tips}
               />
             </div>

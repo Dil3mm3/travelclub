@@ -6,6 +6,8 @@ import { MAP_CONFIG, DEFAULT_MAP_CONFIG } from '@/lib/mapconfig'
 import ConsigliSection from '@/components/ConsigliSection'
 import GroupRow from '@/components/GroupRow'
 import { formatMemberCount } from '@/lib/utils'
+import { getGuidesForDestination } from '@/lib/guides'
+import GuideCard from '@/components/GuideCard'
 
 export const revalidate = 0
 
@@ -37,6 +39,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
   if (!dest) notFound()
 
   const destTips = await getTips(dest.slug)
+  const guides = getGuidesForDestination(dest.slug)
   const activeGroups = dest.groups.filter(g => g.is_active)
   const fullGroups = dest.groups.filter(g => !g.is_active)
   const totalMembers = dest.groups.reduce((s, g) => s + g.member_count, 0)
@@ -81,9 +84,8 @@ export default async function DestinazioneDetailPage({ params }: Props) {
             {/* Stats pill — visibili solo su desktop */}
             <div className="hidden md:flex gap-6">
               {[
-                { num: formatMemberCount(dest.member_count), label: 'italiani qui' },
                 { num: activeGroups.length.toString(), label: 'gruppi attivi' },
-                { num: formatMemberCount(totalMembers), label: 'nei gruppi' },
+                { num: formatMemberCount(totalMembers), label: 'membri nei gruppi' },
               ].map(({ num, label }) => (
                 <div key={label} className="text-center">
                   <div className="font-display font-bold" style={{ fontSize: 22, color: '#A8C468' }}>{num}</div>
@@ -96,9 +98,8 @@ export default async function DestinazioneDetailPage({ params }: Props) {
           {/* Stats mobile */}
           <div className="flex gap-6 mt-5 md:hidden">
             {[
-              { num: formatMemberCount(dest.member_count), label: 'italiani qui' },
               { num: activeGroups.length.toString(), label: 'gruppi attivi' },
-              { num: formatMemberCount(totalMembers), label: 'nei gruppi' },
+              { num: formatMemberCount(totalMembers), label: 'membri nei gruppi' },
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <div className="font-display font-bold" style={{ fontSize: 20, color: '#A8C468' }}>{num}</div>
@@ -195,7 +196,7 @@ export default async function DestinazioneDetailPage({ params }: Props) {
                 {[
                   { label: 'Regione', value: dest.region.charAt(0).toUpperCase() + dest.region.slice(1) },
                   { label: 'Città principali', value: dest.cities.slice(0, 2).join(', ') },
-                  { label: 'Community', value: `${formatMemberCount(dest.member_count)} italiani` },
+                  { label: 'Community', value: `${formatMemberCount(totalMembers)} italiani` },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between items-center">
                     <span style={{ fontSize: 12, color: '#7A8F6A' }}>{label}</span>
@@ -227,6 +228,28 @@ export default async function DestinazioneDetailPage({ params }: Props) {
 
         </div>
       </div>
+
+      {/* GUIDE CITTÀ */}
+      {guides.length > 0 && (
+        <div className="max-w-5xl mx-auto px-6 pb-14">
+          <div style={{ height: 1, background: '#DDE4D0', marginBottom: 32 }} />
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#A8C468', marginBottom: 6 }}>
+                Guide pratiche
+              </p>
+              <h2 className="font-display font-semibold" style={{ fontSize: 22, color: '#1A2010' }}>
+                Guide per città
+              </h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {guides.map(guide => (
+              <GuideCard key={guide.slug} guide={guide} destinationSlug={dest.slug} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
