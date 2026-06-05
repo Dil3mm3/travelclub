@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
   if (!dest) return {}
   return {
     title: `${dest.name} — travelclub`,
-    description: `Gruppi WhatsApp e consigli di viaggio per ${dest.name}. Il club degli italiani che viaggiano.`,
+    description: `Gruppi WhatsApp e consigli di viaggio per ${dest.name}. Il club degli italiani in viaggio.`,
   }
 }
 

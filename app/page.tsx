@@ -33,7 +33,7 @@ export default async function HomePage() {
           <div className="max-w-5xl mx-auto px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#A8C468', marginBottom: 12 }}>
-                il club degli italiani che viaggiano
+                il club degli italiani in viaggio
               </p>
               <h1 className="font-display" style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.1, color: 'white', marginBottom: 12 }}>
                 Viaggia{' '}

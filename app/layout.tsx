@@ -4,11 +4,11 @@ import Navbar from '@/components/Navbar'
 import AuthProvider from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
-  title: 'travelclub — il club degli italiani che viaggiano',
-  description: 'Consigli di viaggio e gruppi WhatsApp per destinazione. La community degli italiani che viaggiano.',
+  title: 'travelclub — il club degli italiani in viaggio',
+  description: 'Consigli di viaggio e gruppi WhatsApp per destinazione. La community degli italiani in viaggio.',
   openGraph: {
     title: 'travelclub',
-    description: 'Il club degli italiani che viaggiano.',
+    description: 'Il club degli italiani in viaggio.',
     siteName: 'travelclub',
     locale: 'it_IT',
     type: 'website',
